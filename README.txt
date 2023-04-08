@@ -20,7 +20,7 @@ Will be uploading 3D prints, and some documentation on the ESP32 and electronics
 
  <More to come...>
 
- From main.cpp
+ From src/main.cpp
 
  /************************************************************
  * project: Weather Station V2.0
