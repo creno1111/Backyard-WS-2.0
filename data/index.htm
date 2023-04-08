@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-type" name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"/>
+<title>WSv2</title>
+<script src="/jquery-1.11.1.min.js"></script> 
+ <!-- jquery - loaded from ROM -->
+<script src="/canvasjs.min.js"></script>		<!-- charting loaded from ROM -->
+<!--<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script> charting loaded from WEB -->
+<style>
+
+@font-face {
+    font-family: "LED_Real";
+    src: url("/led_real.ttf");
+}
+
+body {
+  height:100vh;  
+  width:100vw;  
+  font-family: "LED_Real";
+  background: #000;  
+  overflow-y: scroll;
+  overflow-x: hidden;  
+  margin: auto; 
+}
+
+div[id^='div'] {
+  margin: auto;
+  width: 90%;
+  padding: 3px;
+  border-radius:10px; 
+}
+#divMain {
+  text-align: center;
+  border: 1px solid red;  
+  background-image: url('/bgrnd.png');
+}
+
+table {
+  width: 100%;
+  padding: 0px;
+  
+} 
+
+td, th {
+  padding: 0px;
+  font-size: 12px;
+}
+
+tr.bordered {
+    border-bottom: 1px solid rgb(166, 2, 2);
+}
+
+.tg  {border-collapse:collapse;border-color:black;border-spacing:0;border-style:solid;border-width:1px;}
+.tg td{border-style:solid;border-width:0px;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;
+  padding:0px 5px;word-break:normal;}
+.tg th{border-style:solid;border-width:0px;font-family:Arial, sans-serif;font-size:14px;font-weight:normal;
+  overflow:hidden;padding:0px 5px;word-break:normal;}
+.tg .tg-nto1{background-color:#000000;border-color:inherit;text-align:left;vertical-align:top}
+.tg .tg-ui0h{background-color:#a4a4a4;border-color:inherit;color:#000000;font-weight:bold;text-align:left;text-decoration: none;
+  vertical-align:top}
+.tg .tg-46ji{background-color:#2b1a6d;border-color:inherit;font-weight:bold;text-align:left;vertical-align:top;width:100px;}
+
+[id^="graphButton"] {
+  border-radius:10px;  
+  background-color: #000000;  
+  color: #845bff;  
+  padding: 6px;  
+  font-size: 11px; 
+  font-weight: bold;  
+  border: 1px solid #30a9ef; 
+  border-color: #30a9ef; 
+ }
+
+[id^="graphButton2"] {
+  border-radius:10px;  
+  background-color: #000000;  
+  color: #30a9ef;  
+  padding: 6px;  
+  font-size: 11px; 
+  font-weight: bold;  
+  border: 1px solid #00aaff; 
+  border-color: #00aaff; 
+ }
+
+.fontClock { 
+ text-transform: uppercase;  
+ font: 1.0rem 'Times New Roman', serif;
+ font-weight: 500;
+ color:red;
+ }
+
+.dropbtn {
+  border-radius:5px;  
+  background-color: #000000;  
+  color: darkred;  
+  padding: 5px;  
+  font-size: 16px; 
+  font-weight: bold;  
+  border: 2px solid red; 
+  border-color: #300000; 
+ }
+
+.dropdown-content {
+  border-radius:5px; 
+  display: none;  
+  position: absolute;
+  background-color: #050505;
+  min-width: 160px;
+  box-shadow: 0px 3px 8px 0px rgba(32,32,32,3.2);
+  z-index: 1;
+ }
+
+.dropdown-content a {
+  border-radius:10px;  
+  color: gray;  
+  padding: 12px 16px;  
+  text-decoration: none; 
+  display: block;
+ }
+
+.dropdown-content a:hover {background-color: #101020;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropbtn {background-color: #101020;}
+
+
+.compass {
+	 display: block;
+	 width: 80px;
+	 height: 80px;
+	 border: 3px solid #6e6c68;
+	 border-radius: 100%;
+	 box-shadow: 0 0 10px rgba(0, 0, 0, .85);
+	 position: relative;
+	 font-family: 'Dosis';
+}
+ .compass:before {
+	 font-weight: bold;
+	 position: absolute;
+	 text-align: center;
+	 width: 100%;
+	 content: "";
+	 font-size: 14px;
+	 top: -2px;
+}
+ .compass .direction {
+	 height: 100%;
+	 width: 100%;
+	 display: block;
+	 border-radius: 100%;
+}
+ .compass .direction p {
+	 text-align: center;
+	 margin: 0;
+	 padding: 0;
+	 position: absolute;
+	 top: 50%;
+	 left: 0;
+	 width: 100%;
+	 height: 100%;
+	 line-height: 80px;
+	 display: block;
+	 margin-top: -45px;
+	 font-size: 28px;
+	 font-weight: bold;
+	 color: #6e6c68;
+}
+ .compass .direction p span {
+	 display: block;
+	 line-height: normal;
+	 margin-top: -24px;
+	 font-size: 11px;
+	 text-transform: uppercase;
+	 font-weight: normal;
+	 color: #6e6c68;
+}
+ .compass .arrow {
+	 width: 100%;
+	 height: 100%;
+	 display: block;
+	 position: absolute;
+	 top: 0;
+}
+ .compass .arrow:after {
+	 content: "";
+	 width: 0;
+	 height: 0;
+	 border-left: 5px solid transparent;
+	 border-right: 5px solid transparent;
+	 border-bottom: 10px solid #30a9ef;
+	 position: absolute;
+	 top: -6px;
+	 left: 50%;
+	 margin-left: -5px;
+	 z-index: 99;
+}
+ .compass .arrow.n_dir {	 transform: rotate(0deg);}
+ .compass .arrow.nne_dir {	 transform: rotate(22.5deg);}
+ .compass .arrow.ne_dir {	 transform: rotate(45deg);}
+ .compass .arrow.ene_dir {	 transform: rotate(67.5deg);}
+ .compass .arrow.e_dir {	 transform: rotate(90deg);}
+ .compass .arrow.ese_dir {	 transform: rotate(112.5deg);}
+ .compass .arrow.se_dir {	 transform: rotate(135deg);}
+ .compass .arrow.sse_dir {	 transform: rotate(157.5deg);}
+ .compass .arrow.s_dir {	 transform: rotate(180deg);}
+ .compass .arrow.ssw_dir {	 transform: rotate(202.5deg);}
+ .compass .arrow.sw_dir {	 transform: rotate(-135deg);}
+ .compass .arrow.wsw_dir {	 transform: rotate(-114.5deg);}
+ .compass .arrow.w_dir {	 transform: rotate(-90deg);}
+ .compass .arrow.wnw_dir {	 transform: rotate(-69.5deg);}
+ .compass .arrow.nw_dir {	 transform: rotate(-45deg);}
+ .compass .arrow.nnw_dir {	 transform: rotate(-24.5deg);
+ }
+ 
+
+
+.fadingOut222 {
+    -webkit-animation-duration: 1s;
+    -webkit-animation-name: fading;
+    animation-duration: 1s;
+    animation-name: fading;
+}
+@-webkit-keyframes fading {
+    from {
+        color: 6e6c68;
+    }
+    to {
+        color: white;
+    }
+}
+@keyframes fading {
+    from {
+        color: 6e6c68;
+    }
+    to {
+        color: white;
+    }
+}
+
+.fadingOut {
+    -webkit-animation: fadeinout 0.25s linear forwards;
+    animation: fadeinout 0.25s linear forwards;
+}
+
+@-webkit-keyframes fadeinout {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes fadeinout {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+</style>
+<script language="javascript" type="text/javascript">
+
+
+
+var url = "ws://" + window.location.host + ":1883/";
+var pingPong = false; var wsDied=0; var divInputTitle; var divOptionText;
+var activity = 0;
+var bread = 0; var tdread;
+var getTemp; var getHumidity; var getPressure; var getInxed; var getWindSpeed; var wdirection; var wdirTxt;
+var lastPacket = 0; var lastPacketWSmajor = 0; var lastPacketWSminor = 0;
+var reconnectWS = 0;
+var xVal = 0;
+var yVal = 100; 
+var dataLength = 60; // number of dataPoints visible at any point
+var dpsTemp = []; // dataPoints
+var dpsHumidity = [];
+var dpsPressure = [];
+var dpsWindSpeed = [];
+var tempChart;
+var humidityChart;
+var pressureChart;
+var windspeedChart;
+var graphData;
+var graphSixtyMin=0;
+var graphTwentyFour=0;
+var lat = 0;
+var lon = 0;
+var latOld = 0;
+var lonOld = 0;
+var zipInput = document.getElementById("graphButton2zip");
+var animationData1 = "https://embed.windy.com/embed2.html?lat="+ lat +"&lon="+ lon +"&detailLat="+ lat +"&detailLon="+ lon +"&width=440&height=300&zoom=6&level=surface&overlay=";
+var animationData2 = "&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1";
+var animationRadarData = animationData1 + "radar&product=radar&menu=" + animationData2;
+var animationTempData = animationData1 + "temp&product=ecmwf&menu=" + animationData2;
+var animationAccData = animationData1 + "rainAccu&product=ecmwf&menu=" + animationData2;
+var animationWindData = animationData1 + "wind&product=ecmwf&menu=" + animationData2;
+var NwsLocation,NwsHourlyUrl,NwsForecastUrl,NwsSet;
+//var NwsCurrentIcon;
+var NwsCurrentObservation;
+var NwsCurrentTemp;
+var NwsCurrentWind;
+var forecastVisible=0;
+var hourlyVisible =0;
+var alertVisible = 0;
+//var htemp;
+var timeLockout = false;
+//packet req indicator and packet status
+var NwsPacketReq =0; 		//1 (local), 2 (forcast), 3 (hourly)
+var NwsPacketGood = false; 	//false packet no responce or bad, true packet good responce
+var NwsData2;				//forcast data storage
+var NwsData3;				//hourly data storage
+var NwsReload=0;			//reload indicator
+var forcastNum2=0;			//hourly forcast function control
+var alertNum=0;				//alert function control
+
+// This is called when the page finishes loading
+function init() {
+	bread = document.getElementById("bread");
+	wdirection = document.getElementById("wdir");
+	wdirTxt = document.getElementById("wdirTxt");
+	tdread = document.getElementById("tdread");
+	getTemp = document.getElementById("getTemp");
+	getHumidity = document.getElementById("getHumidity");
+	getPressure = document.getElementById("getPressure");
+	getIndex = document.getElementById("getIndex");
+	getWindSpeed = document.getElementById("getWindSpeed");
+	divInputTitle = document.getElementById("InputTitle");
+	divOptionText = document.getElementById("OptionText"); 
+	divVariables = document.getElementById("divVariables");
+	document.getElementById("tempChartA").style.display = "none";
+	document.getElementById("humidityChartA").style.display = "none";
+	document.getElementById("pressureChartA").style.display = "none";
+	document.getElementById("windspeedChartA").style.display = "none";
+	document.getElementById("animationRadar").style.display = "none";
+	document.getElementById("animationTemp").style.display = "none";
+	document.getElementById("animationAcc").style.display = "none";
+	document.getElementById("animationWind").style.display = "none";
+	NwsCurrentObservation = document.getElementById("currentObservation");
+	NwsCurrentTemp = document.getElementById("currentTemp");
+	NwsCurrentWind = document.getElementById("currentWind");
+	NwsCurrentLocation = document.getElementById("currentLocation");
+	document.getElementById("NwsForecast").setAttribute("hidden", "hidden");
+	document.getElementById("NwsHourly").setAttribute("hidden", "hidden");
+	document.getElementById("NwsAlert").setAttribute("hidden", "hidden");
+    // Connect to WebSocket server
+	//getLocation();
+    wsConnect(url);
+	
+	NwsLoad();
+	// userAction();
+}
+
+//http get calls for nws data
+function getNwsData(url,NwsPacketReq){
+	var NWS = new XMLHttpRequest();
+	NWS.open("GET", url);
+	NWS.setRequestHeader("Accept", "*/*");
+	NWS.onreadystatechange = function () {
+		if (NWS.readyState === 4) {
+			if(NWS.status==200) {
+				NwsPacketGood = true;
+				if(NwsPacketReq == 0){  //location url request
+					var NwsData = JSON.parse(NWS.response);
+					console.log("NWS1",NwsData);
+					NwsLocation = NwsData.properties.relativeLocation.properties.city + ", " + NwsData.properties.relativeLocation.properties.state;
+					NwsCurrentLocation.innerHTML = "<span style='color:#30a9ef'>"+NwsLocation+"</span>";
+					NwsHourlyUrl = NwsData.properties.forecastHourly;
+					NwsForecastUrl = NwsData.properties.forecast;
+				}
+				if(NwsPacketReq == 1){  //forcast request
+					NwsData2 = JSON.parse(NWS.response);
+					console.log("NWS2",NwsData2);
+					forecastDisplay(0);		forecastDisplay(1);
+				}
+				if(NwsPacketReq == 2){  //hourly request
+					NwsData3 = JSON.parse(NWS.response);
+					console.log("NWS3",NwsData3);
+					hourlyDisplay(0);
+					//calculate the hourly start time
+					var tmpHourly = new Date(NwsData3.properties.periods[0].startTime);
+					var hourlyStart = tmpHourly.toLocaleTimeString('en-US',{ hour: "numeric"}).split(" ");
+					var localTime = tdread.innerHTML.split(":");
+					//console.log("Local:", localTime[0],"  RemoteTime:", hourlyStart[0]);
+					if(localTime[0] == "--") NwsPacketGood = false;
+					//make sure the first time listed matches current time
+					if(Number(localTime[0]) == Number(hourlyStart[0])) forcastNum2 = 0;
+					else forcastNum2 = Number(localTime[0]) - Number(hourlyStart[0]); 
+					if(forcastNum2 < 0) forcastNum2=0;
+					console.log(forcastNum2);
+					//gather the current hourly data
+					NwsCurrentObservation.innerHTML = NwsData3.properties.periods[forcastNum2].shortForecast;
+					NwsCurrentTemp.innerHTML = NwsData3.properties.periods[forcastNum2].temperature + " F";
+					NwsCurrentWind.innerHTML = NwsData3.properties.periods[forcastNum2].windDirection + "  " + NwsData3.properties.periods[forcastNum2].windSpeed;
+					document.getElementById("currentIcon").setAttribute('src', NwsData3.properties.periods[forcastNum2].icon);
+					forcastNum2++;			
+					hourlyDisplay(1);		
+				}
+				if(NwsPacketReq == 3){  //alert request
+					alertDisplay(0);
+					NwsData4 = JSON.parse(NWS.response);
+					console.log("NWS4",NwsData4);
+					alertDisplay(1);
+				}
+			}else {NwsPacketGood = false; console.log(NWS.status,NWS.response);}	
+		}
+	};
+	NWS.send();	
+}
+
+//Load nws data and reload data after timeout
+function NwsLoad() {
+	if(NwsReload==0){															 
+		//getNwsData("https://api.weather.gov/alerts/active?point="+ lat +"," + lon ,4);
+		if(NwsPacketReq==0 && !NwsPacketGood) getNwsData("https://api.weather.gov/points/"+ lat +","+ lon,0);
+	}
+	if(NwsPacketReq==0 && NwsPacketGood) {NwsPacketReq++; NwsPacketGood=false;}  //request local urls
+	if(NwsPacketReq==1 && !NwsPacketGood) getNwsData(NwsForecastUrl,1);
+	if(NwsPacketReq==1 && NwsPacketGood) {NwsPacketReq++; NwsPacketGood=false;}  //request forcast
+	if(NwsPacketReq==2 && !NwsPacketGood) getNwsData(NwsHourlyUrl,2);
+ 	if(NwsPacketReq==2 && NwsPacketGood) {NwsPacketReq++; NwsPacketGood=false;}  //request hourly
+	if(NwsPacketReq==3 && !NwsPacketGood) {getNwsData("https://api.weather.gov/alerts/active?point="+ lat +"," + lon ,3);}
+	if(NwsPacketReq==3 && NwsPacketGood) {}										 //request alerts
+	NwsReload++;
+	if(NwsReload==300) {NwsReload=0; NwsPacketGood = false; NwsPacketReq =0 ;}
+	setTimeout(NwsLoad, 1000);
+}
+
+//nws forcast data
+function forecastDisplay(show){
+	var forcastNum = 0;
+	if(show){
+		while(forcastNum < 14){
+			//console.log(NwsData2.properties.periods.length);
+			var nwsAdd = document.createElement("table");
+			nwsAdd.setAttribute("class", "tg");
+			nwsAdd.setAttribute("id", "forecast"+forcastNum);
+			var tmp = NwsData2.properties.periods[forcastNum].name;//<thead><tr><th class='tg-ui0h' colspan='2'><span style='text-decoration:none'>
+			if(tmp.includes("ight")) nwsAdd.innerHTML = "<thead><tr><th class='tg-ui0h' style='background-color:#000' colspan='2'><span style='color:#00aaff;'>"+NwsData2.properties.periods[forcastNum].name+" - Temp " +NwsData2.properties.periods[forcastNum].temperature+" F, Wind "+NwsData2.properties.periods[forcastNum].windDirection+" "+NwsData2.properties.periods[forcastNum].windSpeed;
+			//else if(tmp.includes("Night")) nwsAdd.innerHTML = "<thead><tr><th class='tg-ui0h' style='background-color:#000' colspan='2'><span style='color:#1f3b69;'>"+NwsData2.properties.periods[forcastNum].name+" - Temp " +NwsData2.properties.periods[forcastNum].temperature+" F, Wind "+NwsData2.properties.periods[forcastNum].windDirection+" "+NwsData2.properties.periods[forcastNum].windSpeed;				
+			else nwsAdd.innerHTML = nwsAdd.innerHTML = "<thead><tr><th class='tg-ui0h' colspan='2' style='background-color:#6e6c68'><span style='text-decoration:none'>"+NwsData2.properties.periods[forcastNum].name+" - Temp " +NwsData2.properties.periods[forcastNum].temperature+" F, Wind "+NwsData2.properties.periods[forcastNum].windDirection+" "+NwsData2.properties.periods[forcastNum].windSpeed;
+								nwsAdd.innerHTML = nwsAdd.innerHTML + "</span></th></tr></thead><tbody><tr><td class='tg-46ji'><span style='color:#FFF'>"+
+								"</span></td><td class='tg-nto1'>"+
+								"</td></tr><tr><td class='tg-nto1'><div><img src='"+NwsData2.properties.periods[forcastNum].icon+"'></div>"+
+								"</td><td class='tg-nto1'><span style='color:#8f70ff'>"+NwsData2.properties.periods[forcastNum].detailedForecast+
+								"</td></tr></tbody>";
+			document.getElementById("NwsForecast").appendChild(nwsAdd);
+			forcastNum++;
+		}
+	}
+	else {
+		while(forcastNum < 14){
+			if(document.getElementById("forecast"+forcastNum)) document.getElementById("forecast"+forcastNum).remove();	
+			forcastNum++;
+		}
+	}
+}		
+
+//nws hourly data
+function hourlyDisplay(show){
+	var doOnce = true; //used to tag the first entery as today
+	var dayCount = 0;  //used to extend out the hourly to include the complete next day
+	if(show){
+		while(forcastNum2 < 50){
+			var nwsAdd1 = document.createElement("table");
+			var nwsPart="";
+			nwsAdd1.setAttribute("class", "tg");
+			nwsAdd1.setAttribute("id", "hourly"+forcastNum2);
+			var options = { hour: 'numeric'};
+			var tmp = new Date(NwsData3.properties.periods[forcastNum2].startTime); 
+			if(doOnce) {nwsPart = "<thead><tr><th class='tg-ui0h' style='background-color:#6e6c68' colspan='2'><span>Today</span></th></tr></thead>";}
+			doOnce = false;
+			if(tmp.toLocaleTimeString('en-US') == "12:00:00 AM") {dayCount++;if(dayCount==1)nwsPart = "<thead><tr><th class='tg-ui0h' colspan='2' style='background-color:#6e6c68'><span>Tomorrow</span></th></tr></thead>";}
+			nwsAdd1.innerHTML = nwsPart +  "<tbody><tr><td class='tg-46ji' style='background-color:#000' ><span style='color:#00aaff;'>"+tmp.toLocaleTimeString('en-US',options)+
+								"</span></td><td class='tg-nto1' style='color:#00aaff;'>"+"Temp " +NwsData3.properties.periods[forcastNum2].temperature+" F, "+NwsData3.properties.periods[forcastNum2].windDirection+" Wind "+NwsData3.properties.periods[forcastNum2].windSpeed+
+								"</td></tr><tr><td class='tg-nto1'><div><img src='"+NwsData3.properties.periods[forcastNum2].icon+"'></div>"+
+								"</td><td class='tg-nto1'><span style='color:#8f70ff;'>"+NwsData3.properties.periods[forcastNum2].shortForecast+
+								"</td></tr></tbody>";
+			nwsPart = "";
+			if(dayCount < 25)	document.getElementById("NwsHourly").appendChild(nwsAdd1);
+			else forcastNum2 = 50;
+			//console.log(tmp.toLocaleTimeString('en-US'))
+			console.log(new Intl.DateTimeFormat('en', { timeStyle: "short", timeZone: 'EST' }).format(tmp));
+			forcastNum2++;
+			if(dayCount!=0) dayCount++;
+		}
+	}
+	else {
+		while(forcastNum2 != 0){
+			forcastNum2--;
+			if(document.getElementById("hourly"+forcastNum2)) document.getElementById("hourly"+forcastNum2).remove();	
+		}
+	}
+}
+
+function alertDisplay(show){
+	document.getElementById("graphButton2na").innerHTML = "Alert (0)";
+	document.getElementById("graphButton2na").style.color = "Grey";
+	document.getElementById("graphButton2na").style.backgroundColor = "Black";
+	if(show){
+		if(NwsData4.features.length > 0){
+			console.log("Alert ("+ NwsData4.features.length +")");
+			document.getElementById("graphButton2na").innerHTML = "Alert ("+ NwsData4.features.length +")";
+			document.getElementById("graphButton2na").style.backgroundColor = "Tomato";
+			document.getElementById("graphButton2na").style.color = "Black";
+			alertNum=0;
+			while(alertNum < NwsData4.features.length){
+				var nwsAdd = document.createElement("table");
+				nwsAdd.setAttribute("class", "tg");
+				nwsAdd.setAttribute("id", "alert"+alertNum);
+				var new1; if(NwsData4.features[alertNum].properties.headline != null) new1 = NwsData4.features[alertNum].properties.headline.replace(/\n\n+/g, '~').replace(/[\n]+/g, ' ').replace(/[~]+/g, '<br><br>');
+				var new2; if(NwsData4.features[alertNum].properties.instruction != null) new2 = NwsData4.features[alertNum].properties.instruction.replace(/\n\n+/g, '~').replace(/[\n]+/g, ' ').replace(/[~]+/g, '<br><br>');
+				var new3; if(NwsData4.features[alertNum].properties.description != null) new3 =  NwsData4.features[alertNum].properties.description.replace(/\n\n+/g, '~').replace(/[\n]+/g, ' ').replace(/[~]+/g, '<br><br>');
+				 nwsAdd.innerHTML = "<thead><tr><th class='tg-ui0h' colspan='2' style='background-color:#6e6c68'><span style='text-decoration:none'>"+ 
+									NwsData4.features[alertNum].properties.event+
+									"</span></th></tr></thead><tbody><tr><td class='tg-46ji'><span style='color:#FFF'>"+
+									"</span></td><td class='tg-nto1'>"+
+									"</td></tr><tr><td class='tg-nto1'>"+
+									"</td><td class='tg-nto1'><span style='color:#8f70ff'>"+
+									new1 + "<br><br>" +
+									new2 + "<br><br>" +
+									new3 +
+									"</td></tr></tbody>";
+									console.log(nwsAdd.innerHTML);
+				document.getElementById("NwsAlert").appendChild(nwsAdd);
+				alertNum++;
+			}
+		}
+	}
+	else {
+		while(alertNum != 0){
+			alertNum--;
+			if(document.getElementById("alert"+alertNum)) document.getElementById("alert"+alertNum).remove();	
+		}
+	}
+}
+
+//Websocket connection request
+function wsConnect(url) {
+    
+    // Connect to WebSocket server
+    websocket = new WebSocket(url);
+    // Assign callbacks
+    websocket.onopen = function(evt) { onOpen(evt); heartbeat(); };
+    websocket.onclose = function(evt) { onClose(evt) };
+    websocket.onmessage = function(evt) { onMessage(evt) };
+    websocket.onerror = function(evt) { onError(evt) };
+	clearTimeout(reconnectWS);
+}
+
+//Websocket connection established
+function onOpen(evt) {
+	wsDied=0;
+	graphSixtyMin = 0;
+	graphTwentyFour = 0;
+	//RELOAD NWS DATA
+	NwsReload=0; NwsPacketGood = false; NwsPacketReq =0 ;
+	//temp chart define
+	tempChart = new CanvasJS.Chart("tempChartA", {	title :{text: "Tempurature",fontColor: "#6e6c68",fontSize: 15,fontWeight: "lighter",
+		},subtitles: [{	}],	backgroundColor: "#0c1c2b",	axisY: {gridColor: "#000000",lineColor: "#000000",interval: 1},	axisX: {
+		intervalType: "minutes",lineColor: "#000000"},toolTip:{	shared: true,contentFormatter: function ( e ) {
+		var hour = e.entries[0].dataPoint.x.getHours() % 12 || 12;
+		var minute = e.entries[0].dataPoint.x.getMinutes().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})
+		if (e.entries[0].dataPoint.x.getHours() < 13) minute = minute + "am "
+		else  minute = minute + "pm "
+            return hour +":" + minute +" <p><span style='color:green'>" +e.entries[0].dataPoint.y +"f</span></p>";  
+		},cornerRadius: 6,},data: [{type: "spline",	nullDataLineDashType:  "dot" ,	dataPoints: dpsTemp,color: "#6e6c68",
+		markerSize: 2}],theme: "dark1",	zoomEnabled: true
+	});
+	//humidity chart define
+	humidityChart = new CanvasJS.Chart("humidityChartA", {title :{	text: "Humidity",	fontColor: "#6e6c68",fontSize: 15,fontWeight: "lighter",
+		},subtitles: [{	}],	backgroundColor: "#0c1c2b",	axisY: {gridColor: "#000000",lineColor: "#000000",interval: 1},	axisX: {intervalType: "minutes",
+		lineColor: "#000000"},toolTip:{	shared: true,contentFormatter: function ( e ) {
+		var hour = e.entries[0].dataPoint.x.getHours() % 12 || 12;
+		var minute = e.entries[0].dataPoint.x.getMinutes().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})
+		if (e.entries[0].dataPoint.x.getHours() < 13) minute = minute + "am "
+		else  minute = minute + "pm "
+            return hour +":" + minute +" <p><span style='color:green'>" +e.entries[0].dataPoint.y +"%</span></p>";  
+		},cornerRadius: 6,},data: [{type: "spline",	nullDataLineDashType: "dot",dataPoints: dpsHumidity,color: "#6e6c68",
+		markerSize: 2}],theme: "dark1",	zoomEnabled: true
+	});
+	//pressure chart define
+	pressureChart = new CanvasJS.Chart("pressureChartA", {title :{text: "Pressure",fontColor: "#6e6c68",fontSize: 15,fontWeight: "lighter",
+		},subtitles: [{	}],	backgroundColor: "#0c1c2b",	axisY: {gridColor: "#000000",lineColor: "#000000", interval: 0.1},	axisX: {intervalType: "minutes",
+		lineColor: "#000000"},toolTip:{	shared: true,contentFormatter: function ( e ) {
+		var hour = e.entries[0].dataPoint.x.getHours() % 12 || 12;
+		var minute = e.entries[0].dataPoint.x.getMinutes().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})
+		if (e.entries[0].dataPoint.x.getHours() < 13) minute = minute + "am "
+		else  minute = minute + "pm "
+            return hour +":" + minute +" <p><span style='color:green'>" +e.entries[0].dataPoint.y +"\"</span></p>";  
+		},cornerRadius: 6,},data: [{type: "spline",	nullDataLineDashType: "dot",dataPoints: dpsPressure,color: "#6e6c68",markerSize: 2
+		}],	theme: "dark1",	zoomEnabled: true
+	});	
+	//wind speed chart define
+	windspeedChart = new CanvasJS.Chart("windspeedChartA", {title :{text: "Wind Speed",	fontColor: "#6e6c68",fontSize: 15,fontWeight: "lighter",
+		},subtitles: [{	}],	backgroundColor: "#0c1c2b",	axisY: {gridColor: "#000000",lineColor: "#000000"},	axisX: {intervalType: "minutes",
+		lineColor: "#000000"},toolTip:{	shared: true,contentFormatter: function ( e ) {
+		var hour = e.entries[0].dataPoint.x.getHours() % 12 || 12;
+		var minute = e.entries[0].dataPoint.x.getMinutes().toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false})
+		if (e.entries[0].dataPoint.x.getHours() < 13) minute = minute + "am "
+		else  minute = minute + "pm "
+            return hour +":" + minute +" <p><span style='color:green'>" +e.entries[0].dataPoint.y +" MPH</span></p>";  
+		},cornerRadius: 6,},data: [{type: "spline",	nullDataLineDashType:  "dot" ,	dataPoints: dpsWindSpeed,color: "#6e6c68",
+		markerSize: 2}],theme: "dark1",	zoomEnabled: true
+	});
+
+}
+
+//Websocket connection closed
+function onClose(evt) {
+    // Log disconnection state
+    console.log("Disconnected");
+	websocket.close();
+    // Try to reconnect after a few seconds
+	reconnectWS= setTimeout(function() { wsConnect(url) }, 2000);
+}
+
+//Websocket message received
+function onMessage(evt) {
+	var currentGraph = 0;
+	//console.log(evt.data);
+    var param = evt.data.substring(0,3);
+	var dataPacket = evt.data.substring(3,evt.data.length);
+	//console.log(dataPacket);
+    if(param == "hb:"){ // heatbeat responce w/sensor data
+		//console.log(dataPacket);
+		pingPong=true;
+		activity ++;
+		if(activity == "2") activity="0";
+		var partPacketsAll = 	dataPacket.split("~");
+		//console.log(partPackets);
+		var a = 1
+		while( a < partPacketsAll.length -1 ){
+			//console.log(partPacketsAll[a]);
+			param = partPacketsAll[a].substring(0,3);
+			dataPacket = partPacketsAll[a].substring(3,partPacketsAll[a].length);
+			//console.log(param);
+			//console.log(dataPacket);
+			switch(param){
+				case "Tm:":		// receive temp data packets for graph
+						//decode temp data w/time
+						var partPackets = 	dataPacket.split(","); 	
+						var tempPackets = ['0.0']; var humidityPackets = ['0']; var pressurePackets = ['0.0']; var windspeedPackets = ['0.0'];
+						var hourPackets = ['0']; var minutePackets = ['0'];
+						var yearPackets = ['0']; var monthPackets = ['0']; var dayPackets = ['0'];
+						var minT = 120; var maxT = 0; var minH = 120; maxH = 0; minP=30; maxP=0;
+						for(var i=0; i < dataLength; i++){
+								yearPackets[i] = partPackets[(i * 9)]; monthPackets[i] = partPackets[(i * 9)+1]; dayPackets[i] = partPackets[(i * 9)+2];
+								hourPackets[i] = partPackets[(i * 9)+3]; minutePackets[i] = partPackets[(i * 9)+4]; tempPackets[i] = partPackets[(i * 9)+5];
+								if(tempPackets[i] == 200) tempPackets[i] = null;
+								if(minT > parseInt(tempPackets[i])) minT = parseInt(tempPackets[i]);
+								if(maxT < parseInt(tempPackets[i])) maxT = parseInt(tempPackets[i]); 
+								humidityPackets[i] = partPackets[(i * 9)+6];
+								if(humidityPackets[i] == 200) humidityPackets[i] = null;
+								if(minH > parseInt(humidityPackets[i])) minH = parseInt(humidityPackets[i]);
+								if(maxH < parseInt(humidityPackets[i])) maxH = parseInt(humidityPackets[i]);
+								pressurePackets[i] = partPackets[(i * 9)+7];
+								if(pressurePackets[i] == 200) pressurePackets[i] = null;
+								windspeedPackets[i] = partPackets[(i * 9)+8];
+								if(windspeedPackets[i] == 200) windspeedPackets[i] = null;						
+								if(minP > parseFloat(pressurePackets[i])) minP = parseFloat(pressurePackets[i]);
+								if(maxP < parseFloat(pressurePackets[i])) maxP = parseFloat(pressurePackets[i]);
+						}				
+						//console.log(partPackets);
+						 //Setting default value to empty array
+						for(var i = 0; i < 200; i++){dpsTemp.shift();dpsHumidity.shift();dpsPressure.shift();dpsWindSpeed.shift();}
+						//dumping data to chart
+						for(var i = 0; i < tempPackets.length; i++){
+							dpsTemp.push({x: new Date(yearPackets[i], monthPackets[i], dayPackets[i], hourPackets[i], minutePackets[i]),y:  parseFloat(tempPackets[i])});
+							if (dpsTemp.length > dataLength) {dpsTemp.shift();}
+								dpsHumidity.push({
+									x: new Date(yearPackets[i], monthPackets[i], dayPackets[i], hourPackets[i], minutePackets[i]),
+									y:  parseInt(humidityPackets[i])
+							});
+							if (dpsHumidity.length > dataLength) {dpsHumidity.shift();}					
+							dpsPressure.push({
+									x: new Date(yearPackets[i], monthPackets[i], dayPackets[i], hourPackets[i], minutePackets[i]),
+									y:  parseFloat(pressurePackets[i])
+							});
+							if (dpsPressure.length > dataLength) {dpsPressure.shift();}					
+								dpsWindSpeed.push({
+								x: new Date(yearPackets[i], monthPackets[i], dayPackets[i], hourPackets[i], minutePackets[i]),
+								y:  parseFloat(windspeedPackets[i])
+							});
+							if (dpsWindSpeed.length > dataLength) {dpsWindSpeed.shift();}					
+						}
+						while(i < dataLength -1){i++;
+							dpsTemp.push(		{x: new Date(yearPackets[i], monthPackets[i], dayPackets[i], hourPackets[i], minutePackets[i]),y: null});	
+							if (dpsTemp.length > dataLength) 		{dpsTemp.shift();}
+							dpsHumidity.push(	{x: new Date(yearPackets[i], monthPackets[i], dayPackets[i], hourPackets[i], minutePackets[i]),y: null});
+							if (dpsHumidity.length > dataLength) 	{dpsHumidity.shift();}					
+							dpsPressure.push(	{x: new Date(yearPackets[i], monthPackets[i], dayPackets[i], hourPackets[i], minutePackets[i]),y: null});
+							if (dpsPressure.length > dataLength) 	{dpsPressure.shift();}					
+							dpsWindSpeed.push(	{x: new Date(yearPackets[i], monthPackets[i], dayPackets[i], hourPackets[i], minutePackets[i]),y: null});
+							if (dpsWindSpeed.length > dataLength) 	{dpsWindSpeed.shift();}					
+						}
+						//tempChart.axisY[0].set("minimum", minT - 5);
+						//tempChart.axisY[0].set("maximum", maxT + 5);		
+						if(maxT > minT+4) tempChart.axisY[0].set("interval", (maxT - minT) / 4);
+						//humidityChart.axisY[0].set("minimum", minH - 1);
+						//humidityChart.axisY[0].set("maximum", maxH + 1);
+						if(maxH > minH+4)humidityChart.axisY[0].set("interval", (maxH - minH) / 4);
+						//pressureChart.axisY[0].set("minimum", minP - 0.2);
+						//pressureChart.axisY[0].set("maximum", maxP + 0.2);			
+						if(maxP > minP+4)pressureChart.axisY[0].set("interval", (maxP - minP) / 4);
+						tempChart.render();
+						humidityChart.render();				
+						pressureChart.render();
+						windspeedChart.render();
+					break;
+				case "Mt:":
+						var partPackets = 	dataPacket.split("."); 
+						getTemp.innerHTML ="<span style='color:#6e6c68;font-size: 45px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;font-family: 'LED Real'>" + partPackets[0] + "</span><span style='color:#6e6c68;font-size: 25px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>&#176;f</span>";
+					break;
+				case "Mh:":
+						getHumidity.innerHTML ="<span style='color:#6e6c68;font-size: 45px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>" + dataPacket + "</span><span style='color:#6e6c68;font-size: 25px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>%</span>";
+					break;
+				case "Mp:":
+						var partPackets = 	dataPacket.split("."); 
+						getPressure.innerHTML ="<span style='color:#6e6c68;font-size: 45px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>" + partPackets[0] + "</span><span style='color:#6e6c68;font-size: 25px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>." + partPackets[1] + "\"</span>";
+					break;	
+				case "Mw:":
+						if(dataPacket == 200) dataPacket = "0.00";
+						var partPackets = 	dataPacket.split(".");
+						getWindSpeed.innerHTML ="<span style='color:#6e6c68;font-size: 45px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>" + partPackets[0] + "</span><span style='color:#6e6c68;font-size: 25px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>." + partPackets[1] + "mph</span>";
+						//if(partPackets[0] != lastPacketWSmajor) getWindSpeed.classList.add('fadingOut');
+						//lastPacketWSmajor = partPackets[0];						
+					break;				
+				case "Mi:":
+						var partPackets = 	dataPacket.split("."); 
+						getIndex.innerHTML ="<span style='color:#6e6c68;font-size: 45px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>" + partPackets[0] + "</span><span style='color:#6e6c68;font-size: 25px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>&#176;f</span>";
+					break;	
+				case "Mb:":
+						//console.log(dataPacket);
+						if(parseInt(dataPacket) > 74) 	imgPreload("bread","battery_full_small.png");
+						else if(parseInt(dataPacket) > 49 && parseInt(dataPacket) < 75) imgPreload("bread","battery_75_small.png");
+						else if(parseInt(dataPacket) > 24 && parseInt(dataPacket) < 50) imgPreload("bread","battery_50_small.png");
+						else if(parseInt(dataPacket) > 1 && parseInt(dataPacket) < 25) imgPreload("bread","battery_25_small.png");
+						else imgPreload("bread","battery_low_small.png");
+
+					break;	
+				case "Mr:":
+						//console.log(dataPacket);
+						if(parseInt(dataPacket) > 74 && parseInt(dataPacket) < 100) imgPreload("wread","wifi_low_small.png");
+						else if(parseInt(dataPacket) > 62 && parseInt(dataPacket) < 75) imgPreload("wread","wifi_13rd_small.png");
+						else if(parseInt(dataPacket) > 53 && parseInt(dataPacket) < 63) imgPreload("wread","wifi_23rd_small.png");
+						else imgPreload("wread","wifi_high_small.png");
+					break;
+				case "Md:":
+						if(dataPacket == 0) break;
+						var partPackets = dataPacket.split("_");
+						wdirection.style.visibility = "none";
+						wdirection.className = "arrow " + dataPacket;
+						wdirection.style.visibility = "block";
+						wdirTxt.innerHTML = partPackets[0].toUpperCase();
+						if(partPackets[0] != lastPacket) wdirTxt.classList.add('fadingOut');
+						lastPacket = partPackets[0];
+					break;			
+				case "TD:":
+						//check time minute, on 0 minutes - force reload of NWS data
+						var timeMonitor = dataPacket.split(":");
+						var timeMonitorMin = timeMonitor[1].split("pm");
+						console.log("part ", timeMonitorMin[0]);
+						if(timeMonitorMin[0] =="0" && timeLockout==false) {
+							timeLockout=true; NwsReload=0; NwsPacketGood = false; NwsPacketReq =0 ;
+						}
+						else if(timeMonitorMin[0] !="0") timeLockout = false;
+						//Set time on page
+						tdread.innerHTML = dataPacket;
+					break;		
+				case "Gt:":
+						if(dataPacket == 60) { graphSixtyMinSet(); }
+						if(dataPacket == 24) { graphTwentyFourSet(); }
+					break;
+				case "Ll:":
+						
+						var latLon = dataPacket.split(",");
+						lat = parseFloat(latLon[0]);
+						lon = parseFloat(latLon[1]);
+						if(latOld != lat || lonOld != lon){
+							NwsReload=0; NwsPacketGood = false; NwsPacketReq =0 ;
+							animationData1 = "https://embed.windy.com/embed2.html?lat="+ lat +"&lon="+ lon +"&detailLat="+ lat +"&detailLon="+ lon +"&width=440&height=300&zoom=6&level=surface&overlay=";
+							animationRadarData = animationData1 + "radar&product=radar&menu=" + animationData2;
+							animationTempData = animationData1 + "temp&product=ecmwf&menu=" + animationData2;
+							animationAccData = animationData1 + "rainAccu&product=ecmwf&menu=" + animationData2;
+							animationWindData = animationData1 + "wind&product=ecmwf&menu=" + animationData2;							
+							latOld = lat; lonOld = lon;
+							console.log(lat,lon);
+						}
+					break;
+				default:
+					break;
+			}
+		a++;
+		}
+    }
+}
+
+//Websock data send
+function doSend(message) { console.log("Sending: " + message);  websocket.send(message); }
+
+//Websocket error events
+function onError(evt) { console.log("ERROR: " + evt.data); }
+
+//Data request interval, detect failed websock comms
+function heartbeat() {
+//if(NwsSet == 0 && NwsLocation!="") { NwsLoad(); getNwsForcastData(); getNwsHourlyData(); NwsSet = 1;}	
+if(pingPong) {wsDied=0; pingPong=false;}
+  else wsDied++;
+  if(wsDied > 1) onClose();
+  else {doSend("HeartBeat");
+  wdirTxt.classList.remove('fadingOut');
+  getWindSpeed.classList.remove('fadingOut');
+ setTimeout(heartbeat, 5000);}
+}
+
+// Called from HTML
+function onPressSM()	 	{	if(smCheckbox.checked) doSend("smOn"); else doSend("smOff");	}
+function onPressAS() 	    {	if(asCheckbox.checked) doSend("asOn"); else doSend("asOff");	}
+function wsCnt() 			{	wsConnect(url);							}
+function resetAH()			{	doSend("resetAH");}
+function graphSixtyMinID( )   {doSend("60mGraphON"); doSend("HeartBeat");}
+function graphTwentyFourID( ) {doSend("24hGraphON"); doSend("HeartBeat");}
+
+//Chart rendering
+function chartTemp()      { 
+		
+		document.getElementById("humidityChartA").style.display = "none";
+		document.getElementById("pressureChartA").style.display = "none";
+		document.getElementById("windspeedChartA").style.display = "none";
+		
+		document.getElementById("graphButton2h").style.border ="1px solid #00aaff";
+		document.getElementById("graphButton2p").style.border ="1px solid #00aaff";
+		document.getElementById("graphButton2w").style.border ="1px solid #00aaff";
+		htmlElementDisplay("tempChartA","graphButton2t",""); 	  tempChart.render();      }
+function chartHum()       {
+	document.getElementById("tempChartA").style.display = "none";
+	
+		document.getElementById("pressureChartA").style.display = "none";
+		document.getElementById("windspeedChartA").style.display = "none";
+		document.getElementById("graphButton2t").style.border ="1px solid #00aaff";
+	
+		document.getElementById("graphButton2p").style.border ="1px solid #00aaff";
+		document.getElementById("graphButton2w").style.border ="1px solid #00aaff";
+		htmlElementDisplay("humidityChartA","graphButton2h","");  humidityChart.render();  }
+function chartPressure()  { 
+	document.getElementById("tempChartA").style.display = "none";
+		document.getElementById("humidityChartA").style.display = "none";
+	
+		document.getElementById("windspeedChartA").style.display = "none";
+		document.getElementById("graphButton2t").style.border ="1px solid #00aaff";
+		document.getElementById("graphButton2h").style.border ="1px solid #00aaff";
+	
+		document.getElementById("graphButton2w").style.border ="1px solid #00aaff";
+		htmlElementDisplay("pressureChartA","graphButton2p","");  pressureChart.render();  }
+function chartWindSpeed() { 
+	document.getElementById("tempChartA").style.display = "none";
+		document.getElementById("humidityChartA").style.display = "none";
+		document.getElementById("pressureChartA").style.display = "none";
+	
+		document.getElementById("graphButton2t").style.border ="1px solid #00aaff";
+		document.getElementById("graphButton2h").style.border ="1px solid #00aaff";
+		document.getElementById("graphButton2p").style.border ="1px solid #00aaff";
+	
+		htmlElementDisplay("windspeedChartA","graphButton2w",""); windspeedChart.render(); }
+
+//Radar, Misc Animation iframes rendering
+function animationRadar(){ 
+	
+		document.getElementById("animationTemp").style.display = "none";
+		document.getElementById("animationAcc").style.display = "none";
+		document.getElementById("animationWind").style.display = "none";
+		
+		document.getElementById("graphButton2at").style.border ="1px solid #00aaff";
+		document.getElementById("graphButton2ac").style.border ="1px solid #00aaff";
+		document.getElementById("graphButton2aw").style.border ="1px solid #00aaff";
+		document.getElementById("ifRadar").setAttribute('src', animationRadarData);	htmlElementDisplay("animationRadar","graphButton2ar","ifRadar"); }
+function animationTemp() { 
+	document.getElementById("animationRadar").style.display = "none";
+		
+		document.getElementById("animationAcc").style.display = "none";
+		document.getElementById("animationWind").style.display = "none";
+		document.getElementById("graphButton2ar").style.border ="1px solid #00aaff";
+		
+		document.getElementById("graphButton2ac").style.border ="1px solid #00aaff";
+		document.getElementById("graphButton2aw").style.border ="1px solid #00aaff";
+		document.getElementById("ifTemp").setAttribute('src', animationTempData);	htmlElementDisplay("animationTemp","graphButton2at","ifTemp");  }
+function animationAcc()  { 
+	document.getElementById("animationRadar").style.display = "none";
+		document.getElementById("animationTemp").style.display = "none";
+	
+		document.getElementById("animationWind").style.display = "none";
+		document.getElementById("graphButton2ar").style.border ="1px solid #00aaff";
+		document.getElementById("graphButton2at").style.border ="1px solid #00aaff";
+	
+		document.getElementById("graphButton2aw").style.border ="1px solid #00aaff";
+		document.getElementById("ifAcc").setAttribute('src', animationAccData);		htmlElementDisplay("animationAcc","graphButton2ac","ifAcc");    }
+function animationWind() { 
+	document.getElementById("animationRadar").style.display = "none";
+		document.getElementById("animationTemp").style.display = "none";
+		document.getElementById("animationAcc").style.display = "none";
+		
+		document.getElementById("graphButton2ar").style.border ="1px solid #00aaff";
+		document.getElementById("graphButton2at").style.border ="1px solid #00aaff";
+		document.getElementById("graphButton2ac").style.border ="1px solid #00aaff";
+		
+		document.getElementById("ifWind").setAttribute('src', animationWindData);	htmlElementDisplay("animationWind","graphButton2aw","ifWind");   }
+
+//HTML webpage element display/hide (charts and animations)
+function htmlElementDisplay(htmlElement, buttonElement, iframeElement){
+	if(window.getComputedStyle(document.getElementById(htmlElement)).display === "none") {
+		document.getElementById(htmlElement).style.display = "block";
+		document.getElementById(buttonElement).style.border ="1px solid #666600";
+	}
+	else {
+		document.getElementById(htmlElement).style.display = "none";
+		document.getElementById(buttonElement).style.border ="1px solid #00aaff";
+	}
+}
+
+//Chart timeframe switching 60m
+function graphSixtyMinSet()	{	
+	if(graphSixtyMin==0) {		graphSixtyMin=1;		graphTwentyFour=0;		dataLength=60;
+		document.getElementById("graphButton_1").style.border ="1px solid #666600";
+		document.getElementById("graphButton_24").style.border ="1px solid #30a9ef";
+		tempChart.render();humidityChart.render();pressureChart.render();windspeedChart.render();
+	}
+}
+
+//Chart timeframe switching 24h
+function graphTwentyFourSet()	{
+	if(graphTwentyFour==0) {		graphTwentyFour=1;		graphSixtyMin=0;		dataLength=96;
+		document.getElementById("graphButton_1").style.border ="1px solid #30a9ef";
+		document.getElementById("graphButton_24").style.border ="1px solid #666600";
+		tempChart.render();humidityChart.render();pressureChart.render();windspeedChart.render();
+	}
+}
+
+function toggleForecast() {
+	if(forecastVisible) { 
+		document.getElementById("NwsForecast").setAttribute("hidden", "hidden"); forecastVisible = 0;
+		document.getElementById("graphButton2nf").style.border ="1px solid #30a9ef";
+	}
+	else { 
+		document.getElementById("NwsForecast").removeAttribute("hidden"); forecastVisible = 1;
+		document.getElementById("graphButton2nf").style.border ="1px solid #666600";
+		if(hourlyVisible) toggleHourly();
+		if(alertVisible) toggleAlert();
+	}
+
+}
+
+function toggleHourly() {
+	if(hourlyVisible) { 
+		document.getElementById("NwsHourly").setAttribute("hidden", "hidden"); hourlyVisible = 0;
+		document.getElementById("graphButton2nh").style.border ="1px solid #30a9ef";
+	}
+	else { 
+		document.getElementById("NwsHourly").removeAttribute("hidden"); hourlyVisible = 1;
+		document.getElementById("graphButton2nh").style.border ="1px solid #666600";
+		if(forecastVisible) toggleForecast();
+		if(alertVisible) toggleAlert();
+	}
+
+}
+
+function toggleAlert() {
+	if(alertVisible) { 
+		document.getElementById("NwsAlert").setAttribute("hidden", "hidden"); alertVisible = 0;
+		document.getElementById("graphButton2na").style.border ="1px solid #30a9ef";
+	}
+	else { 
+		document.getElementById("NwsAlert").removeAttribute("hidden"); alertVisible = 1;
+		document.getElementById("graphButton2na").style.border ="1px solid #666600";
+		if(forecastVisible) toggleForecast();
+		if(hourlyVisible) toggleHourly();
+	}
+
+}
+
+
+//Image preloader for battery and wifi indicators
+function imgPreload(ELEMENT,MSG){
+    var container = document.getElementById(ELEMENT); var img = container.getElementsByTagName('img')[0];  var src = '/'+MSG;
+    if(!img) container.innerHTML = '<img src="'+src+'"\>';
+    else{ img.style.backgroundImage = 'url('+img.src+')';  img.style.backgroundSize = '100% 100%';  img.src = src;  }
+}
+
+function getLocation() {
+        if (navigator.geolocation) {
+			console.log("location request");
+          navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+		
+        }
+      }
+
+function showPosition(position) {
+        lat =  position.coords.latitude;
+		lon = position.coords.longitude;
+      }
+
+function showError(error) {
+        if(error.PERMISSION_DENIED){
+            
+        }
+      }
+//update zip code on input
+function zipUpdate() {
+	doSend("zip:"+document.getElementById("graphButton2zip").value);
+	console.log(document.getElementById("graphButton2zip").value);
+}	  
+
+//Initialize webpage load
+window.addEventListener("load", init, false);
+
+</script>
+
+</head>
+
+<body id="index"  bgcolor="#000000;" text="#ffffff" >
+
+<!-- top dropdown menu -->
+  <div id="divMenu" style="color:#845bff;">
+  <table>
+  <td style="width: 170px" ><div class="dropdown">
+    <button class="dropbtn" style="color:#845bff;">Weather Station v2</button>
+    <div class="dropdown-content">
+      <a href="/uploader">UPDATE</a>
+      <a id="resetLink" title="RESET" href="#" onclick="reset();return false;">RESET</a>
+    </div>
+	</div>
+  </td>
+  <td>
+  <span><div id="tdread" style="color:#845bff;font-size: 17px;text-align: center">--:--am</div></span>
+	</td>
+	<td><div id="wread" style="color:#6e6c68;font-size: 12px"><img src='/wifi_low_small.png' ></div></td>
+	<td><div id="bread" style="color:#6e6c68;font-size: 12px"><img src='/battery_low_small.png'></div></td>
+  </table>
+</div>
+<!-- top table - main controls -->
+<div id="divMain">
+<table>
+<tr>
+	<td style="text-shadow: 0px 0px 3px black;">Temperature</td><td style="text-shadow: 0px 0px 3px black;">wind Direction</td><td style="text-shadow: 0px 0px 3px black;">Humidity</td>
+	</tr><tr>
+	<td style="text-shadow: 0px 0px 3px black;">Heat Index</td><td style="text-shadow: 0px 0px 3px black;">Speed </td><td style="text-shadow: 0px 0px 3px black;">Pressure</td>
+</tr>
+<tr>
+ <td><div id="getTemp" style="margin: 0 auto;"></div></td>
+ <td style="padding: 10px" ><div class="compass" style="margin: 0 auto"><div  class="direction" ><p class = "fading" id="wdirTxt"  >NA</p></div>
+
+			<div id="wdir"></div></div></td>
+
+ <td><div id="getHumidity" style="margin: 0 auto;"></div></td>
+
+</tr><tr>
+	<td><div id="getIndex" style="margin: 0 auto;"></td><td><div id="getWindSpeed"  style="margin: 0 auto;font-size: 5vw"></td><td><div id="getPressure" style="margin: 0 auto;"></div></td>
+</tr>
+</table>
+<hr color="#501010" size="1">
+<table>
+<!-- <th><div style="text-shadow: 0px 0px 3px black;text-align: center">Graph Time</div></th><th></th><th></th><th><div style="text-shadow: 0px 0px 3px black;text-align: center">Graph Type</div></th> -->
+<tr>
+<td><button onclick="graphSixtyMinID()" type="button" id="graphButton_1">1 hour</button></td>
+<td><button onclick="graphTwentyFourID()" type="button" id="graphButton_24">24 hour</button></td>
+<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td><button onclick="chartTemp()" type="button" id="graphButton2t">Temps</button></td>
+<td><button onclick="chartHum()" type="button" id="graphButton2h">Humidity</button></td>
+<td><button onclick="chartPressure()" type="button" id="graphButton2p">Pressure</button></td>
+<td><button onclick="chartWindSpeed()" type="button" id="graphButton2w">Wind MPH</button></td>
+</tr>
+</table>
+<!-- border-top: 1px solid #501010; -->
+<div id="tempChartA" style="height: 180px; width: 100; display: none"></div>	
+<div id="humidityChartA" style="height: 180px; width: 100; display: none"></div>
+<div id="pressureChartA" style="height: 180px; width: 100; display: none"></div>
+<div id="windspeedChartA" style="height: 180px; width: 100; display: none"></div>
+<hr color="#501010" size="1">
+<table>
+<!-- <th><div style="text-shadow: 0px 0px 3px black;text-align: center">Live radar</div></th> -->
+<tr>
+	<td><button onclick="animationRadar()" type="button" id="graphButton2ar">Radar, Lightning</button></td>
+	<td><button onclick="animationTemp()" type="button" id="graphButton2at">Area Temerature</button></td>
+	<td><button onclick="animationAcc()" type="button" id="graphButton2ac">Rain accumulation</button></td>
+	<td><button onclick="animationWind()" type="button" id="graphButton2aw">Wind</button></td>
+</tr>
+</table>
+<div id="animationRadar" style="height:300px; width: 340; display: none"><iframe id="ifRadar" width="340" height="300" src="" frameborder="0"></iframe></div>
+<div id="animationTemp" style="height: 300px; width: 340; display: none"><iframe id="ifTemp" width="340" height="300" src="" frameborder=0"></iframe></div>
+<div id="animationAcc" style="height: 300px; width: 340; display: none"><iframe id="ifAcc" width="340" height="300"   src="" frameborder="0"></iframe></div>
+<div id="animationWind" style="height: 300px; width: 340; display: none"><iframe id="ifWind" width="340" height="300" src="" frameborder="0"></iframe></div>
+<hr color="#501010" size="1">
+<table>
+	<tr><td><div id="currentLocation" style="text-shadow: 0px 0px 3px black;text-align: center;padding-bottom: 7px;"><span style='color:#30a9ef'>NO NWS DATA</span></div>
+			<div><input type="text" size="5" id="graphButton2zip"><input type="button" id="graphButton2zipselect" onclick="zipUpdate()" value="Zip"></div>
+		</td>
+		<td align="right" style="padding:3px"><img id="currentIcon" src="" alt="" ></td>
+		<td align="left" width="25%" >
+			<table>
+				<tr><div id="currentTemp" ></div></tr>
+				<tr><div id="currentWind" ></div></tr>
+				<tr><div id="currentObservation" ></div></tr>
+			</table>
+		</td>
+		<td><table>
+			<tr><td colspan="2"><button onclick="toggleAlert()" style="width:100px;color:gray;padding-bottom: 5px;" type="button" id="graphButton2na">Alert (0)</button></td></tr>
+			<tr><td><button onclick="toggleForecast()" type="button" id="graphButton2nf">Forcast</button></td>
+			<td><button onclick="toggleHourly()" type="button" id="graphButton2nh">Hourly</button></td></tr>
+		</td></table>
+	</tr>
+</table>
+<div  id="NwsForecast"></div>
+<div  id="NwsHourly"></div>
+<div  id="NwsAlert"></div>
+
+	
+</div>
+
+</html>
+
+
+
+
+
+
+
