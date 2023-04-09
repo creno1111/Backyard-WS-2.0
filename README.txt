@@ -85,3 +85,23 @@ Will be uploading 3D prints, and some documentation on the ESP32 and electronics
  * └── ezTime @ 0.8.3 (required: ropg/ezTime @ ^0.8.3)
  *  https://canvasjs.com/ (chart Javascript) for test weather data charting in servced webpage
 */
+
+
+Things of not, a mention on what to expect after first bootup, but before fully running
+
+From /data/README.txt
+
+To upload the data files for the FS partition, follow these steps after uploading the WSv2 
+firmware and ensuring that the ESP32 board is running WSv2. (i.e., activated Config Portal)
+Complete the Config Portal setup to join your WiFi network. Then:
+
+1) navigate to the board's IP address, which may require the use of an IP finder utility. 
+
+2) ensure that the file upload setting is set to [FILE] upload, and then navigate to the 
+data folder to select and upload the necessary files (All files). 
+
+3) click on the [<-BACK] button to return to the WSv2 webpage.
+
+Please note that during the initial bootup, you may need to restart the system if the 
+Config AP fails to activate. The first bootup process will format the FS partition and
+may not enter running mode.
