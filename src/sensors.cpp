@@ -7,6 +7,11 @@
 #include <Wire.h>
 #include "as5600.h"
 
+//NOTE: if missing BME sensor, sensor auto detect will force test mode.
+//      Temp, Humidity, and Barometric pressure are simulated.
+//      Wind direction will always be North, wind speed will vary because analog pin will float.
+//Test mode is used for testing out the webserver and other functions without sensors.
+
 /*adjustment*/  float WindDirectionOffset = 0.0; //offset degrees, dependent on mouting position, Clockwise 1 deg per 1.00
 /*adjustment*/  float WindHoldOffset = 0.35; //Max windspeed bleeddown time (lower slower)
 /*adjustment*/  float TempOffset = 0.0;//-2.55; //Temperature offset in deg F
@@ -196,6 +201,7 @@ float readWindSpeed(void){
     if(calcSpeed > historySpeed) historySpeed = calcSpeed;
     else if(historySpeed > WindHoldOffset) {historySpeed = historySpeed - WindHoldOffset; calcSpeed = historySpeed; }
   }
+  if(calcSpeed < 0.99) calcSpeed = 0.00;
   return calcSpeed; //return mph 
 }
 
