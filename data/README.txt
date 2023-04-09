@@ -1,5 +1,6 @@
 To upload the data files for the FS partition, follow these steps after uploading the WSv2 
-firmware and ensuring that the ESP32 board is running WSv2. 
+firmware and ensuring that the ESP32 board is running WSv2. (i.e., activated Config Portal)
+Complete the Config Portal setup to join your WiFi network. Then:
 
 1) navigate to the board's IP address, which may require the use of an IP finder utility. 
 
