@@ -13,6 +13,8 @@
 
 AMS_5600 ams5600;
 
+bool test_board = false;
+
 //windspeed interrupt veriables 
 int SamplingRate = 50;                //interrupts per second
 int IRAM_ATTR endAngle=0;             //measured angle since last read
@@ -59,9 +61,9 @@ BME280I2C::Settings settings(
    BME280I2C::I2CAddr_0x76
 );
 
-#ifndef test_board
+//#ifndef test_board
 BME280I2C bme(settings);
-#endif
+//#endif
 EnvironmentCalculations::TempUnit envTempUnit = EnvironmentCalculations::TempUnit_Fahrenheit;
 
 float convertRawAngleToDegrees(word newAngle)
@@ -78,7 +80,7 @@ bool sensorsInit()
   if(!bme.begin())
   {
     Serial.println("\n\n*** Could not fnd BME280 sensor!\n*** Staring in test board mode\n\n");
-    #define test_board
+    test_board = true;
     delay(1000);
   }
   //timer interrupt setup
@@ -94,14 +96,11 @@ void sensorsSvc(void){
   static long readDelay = 0;
   if(millis() > readDelay + 1000){
     readDelay = millis();
-    #ifndef test_board
-      BME280::TempUnit tempUnit(BME280::TempUnit_Fahrenheit);
+    if(test_board){    pres = 30.00;     temp = 72.00;     hum = 40;}
+    else { BME280::TempUnit tempUnit(BME280::TempUnit_Fahrenheit);
       BME280::PresUnit presUnit(BME280::PresUnit_inHg);
       bme.read(pres, temp, hum, tempUnit, presUnit);
-    #endif
-    #ifdef test_board
-     pres = 30.00;     temp = 72.00;     hum = 40;
-    #endif
+    }
   }
 }
 
@@ -116,11 +115,8 @@ String readWindDirection(void){
     static float angleRead[100];
     static int count =0 ;
     if(count==buffers) count = 0;
-    #ifndef test_board
-      angleRead[count] = convertRawAngleToDegrees(ams5600.getRawAngle()) + WindDirectionOffset;
-    #else
-      angleRead[count] = 0;
-    #endif
+    if(test_board)    angleRead[count] =  angleRead[count] = 0;
+    else angleRead[count] = convertRawAngleToDegrees(ams5600.getRawAngle()) + WindDirectionOffset;
     if(angleRead[count] > 360) angleRead[count] = angleRead[count] - 360;
     if(angleRead[count] < 0) angleRead[count] = 360 - angleRead[count];
     float readtmp = angleRead[count];
