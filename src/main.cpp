@@ -57,6 +57,7 @@
  * ├── WebSockets @ 2.3.7 (required: links2004/WebSockets @ ^2.3.6)
  * └── ezTime @ 0.8.3 (required: ropg/ezTime @ ^0.8.3)
  * 
+ * MIT License
 */
 
 
