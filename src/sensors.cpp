@@ -11,10 +11,6 @@
 /*adjustment*/  float WindHoldOffset = 0.35; //Max windspeed bleeddown time (lower slower)
 /*adjustment*/  float TempOffset = 0.0;//-2.55; //Temperature offset in deg F
 
-
-/****************enable the following line for the test board (missing Temp, Hum, Pressure sensors)*****************/
-#define test_board
-
 AMS_5600 ams5600;
 
 //windspeed interrupt veriables 
@@ -77,23 +73,20 @@ float convertRawAngleToDegrees(word newAngle)
 
 bool sensorsInit()
 {
-    #ifndef test_board
-      if(Wire.begin())   Serial.println("Wire Init: ok");
-      else Serial.println("Wire Init: NO");
-    while(!bme.begin())
-    {
-      Serial.println("Could not fnd BME280 sensor!");
-      delay(1000);
-    }
-  #endif
-
+  if(Wire.begin())   Serial.println("Wire Init: ok");
+  else Serial.println("Wire Init: NO");
+  if(!bme.begin())
+  {
+    Serial.println("\n\n*** Could not fnd BME280 sensor!\n*** Staring in test board mode\n\n");
+    #define test_board
+    delay(1000);
+  }
   //timer interrupt setup
   timer = timerBegin(0, 80, true);                 //Begin timer with 1 MHz frequency (80MHz/80)
   timerAttachInterrupt(timer, &windACC, true);     //Attach the interrupt to Timer1
   unsigned int timerFactor = 1000000/SamplingRate; //Calculate the time interval between two readings, or more accurately, the number of cycles between two readings
   timerAlarmWrite(timer, timerFactor, true);       //Initialize the timer
   timerAlarmEnable(timer);
-
   return true;
 }
 
@@ -109,9 +102,6 @@ void sensorsSvc(void){
     #ifdef test_board
      pres = 30.00;     temp = 72.00;     hum = 40;
     #endif
-    //
-    //static long loopcount = 0;    Serial.printf("Still active #%i.\n", loopcount++);
-    //
   }
 }
 
