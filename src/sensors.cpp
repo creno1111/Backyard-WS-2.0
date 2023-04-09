@@ -14,7 +14,7 @@
 
 /*adjustment*/  float WindDirectionOffset = 0.0; //offset degrees, dependent on mouting position, Clockwise 1 deg per 1.00
 /*adjustment*/  float WindHoldOffset = 0.35; //Max windspeed bleeddown time (lower slower)
-/*adjustment*/  float TempOffset = 0.0;//-2.55; //Temperature offset in deg F
+/*adjustment*/  float TempOffset = 0.0; //Temperature offset in deg F
 
 AMS_5600 ams5600;
 
