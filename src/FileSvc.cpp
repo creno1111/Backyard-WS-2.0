@@ -14,6 +14,7 @@ extern float dayGraphTemp[];
 extern int dayGraphHumidity[];
 extern float dayGraphBarometric[];
 extern float dayGraphWindspeed[];
+extern struct settingsWS settings_WS;
 
 /*****internal functions************/
 //Check if file exists, Input month and day, creates filename global fname and checks if exists. Returns true or false
@@ -160,56 +161,55 @@ void fill24hBuffer(void){
   }
 }
 
-//check for settings file
+
+/************ Settings file read / write *******************/
+//Settings file global (TODO: shoudl be local, will fix later)
 const char settingsFile[] = "/settings.txt";
 
+//cleanup after use, settings FS object
 void fileCleanupSettings(void){ fileSetting.flush();  fileSetting.close(); }
 
+//check for settings file, TODO: should be integrated to the other file checks, integrate later
 bool fileExistsSettings(void){    if(!FileFS.exists(settingsFile)){ return false;  } return true;   }
- 
-//open settings file - read lat lon
-void openSettings(double &lat, double &lon) {
+
+//read settings file, return settings struct
+settingsWS readSettings(void){
   if(!fileExistsSettings()) { 
     Serial.printf("FS: Creating new settings.txt file\n");
     fileSetting = FileFS.open(settingsFile, "w"); 
     fileCleanupSettings();
   }
   fileSetting = FileFS.open(settingsFile, "r+"); 
-  fileSetting.seek(0,SeekEnd);
-    if(fileSetting.position()==0){
-      Serial.println("here");
-       int length =  sprintf(buffer,"lat:1.2345;lon:-5.4321;\n");
-       int a = 0;  while(a < length){    fileSetting.write(buffer[a]);    a++;  }
-       Serial.printf("length %i\n", length);
+  while (fileSetting.available()) {
+    String line = fileSetting.readStringUntil('\n');
+    int colonIndex = line.indexOf(':');
+    if (colonIndex >= 0) {
+      String token = line.substring(0,colonIndex);
+      String result = line.substring(colonIndex + 1);
+      if(token == "lat"){        settings_WS.lat = result.toFloat();} 
+      else if(token == "lon"){   settings_WS.lon = result.toFloat();} 
+      else if(token == "zip"){   settings_WS.zip = result.toInt();  }
     }
-  fileSetting.seek(0,SeekSet);
-  int readSize = fileSetting.readBytes(buffer,40);
-  buffer[readSize]='\0'; 
-  String dataPacket(buffer);
-  char strTmp[50];
-  sprintf(strTmp,"%s", dataPacket.substring(dataPacket.indexOf(':')+1,dataPacket.indexOf(';')));  
-  lat = atof(strTmp);
-  sprintf(strTmp,"%s", dataPacket.substring(dataPacket.lastIndexOf(':')+1,dataPacket.lastIndexOf(';')));  
-  lon = atof(strTmp);
+  }
   fileCleanupSettings();
+  Serial.printf("Settings = lat: %f, lon: %f, zip: %i\n", settings_WS.lat, settings_WS.lon, settings_WS.zip);
+  return settings_WS;
 }
 
-//save settings file - save lat lon
-void saveSettings(float lat, float lon){
+//write setting to settings file
+void writeSettings(void){
   if(!fileExistsSettings()) { 
     Serial.printf("FS: Creating new settings.txt file\n");
     fileSetting = FileFS.open(settingsFile, "w"); 
     fileCleanupSettings();
   }
-  fileSetting = FileFS.open(settingsFile, "r+"); 
-  //Serial.printf("%.4f", lat);
-  char strTmp[50];
-  int length = sprintf(strTmp, "lat:%.4f;", lat);
-  int a = 0;  while(a < length){    fileSetting.write(strTmp[a]);    a++;  }
-      length = sprintf(strTmp, "lon:%.4f;\n", lon);
-      a = 0;  while(a < length){    fileSetting.write(strTmp[a]);    a++;  }
-      fileSetting.write(EOF);
-  fileCleanupSettings();
+  fileSetting = FileFS.open(settingsFile, "w"); // Open the settings file for writing
+  if (fileSetting) {
+    fileSetting.printf("lat:%f\n", settings_WS.lat); // Write the latitude value
+    fileSetting.printf("lon:%f\n", settings_WS.lon); // Write the longitude value
+    fileSetting.printf("zip:%i\n", settings_WS.zip); // Write the zip code value
+    fileCleanupSettings();
+    Serial.println("Settings written to file.");
+  }
 }
-
   
