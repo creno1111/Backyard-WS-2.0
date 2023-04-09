@@ -96,7 +96,7 @@ void webSetup(void){
       "type: 'POST',data: data,contentType:false,processData:false,xhr: function(){var xhr = new window.XMLHttpRequest();xhr.upload.addEventListener('progress', function(evt) {"
       "if (evt.lengthComputable){var per = evt.loaded / evt.total;$('#prg').html('' + Math.round(per*100) + '%');$('#bar').css('width',Math.round(per*100) + '%');"
       "}}, false);return xhr;},success:function(d, s){if(updateType == '/updfirmware' || updateType == '/updpartition'){$('#prg').html('Please wait, restarting');"
-      "setTimeout(function (){window.location.href = '/';}, 20000);}else{$('#prg').html('Upload completed');$('#bar').css('width','0%');setTimeout(function () {"
+      "setTimeout(function (){window.location.href = '/';}, 8000);}else{$('#prg').html('Upload completed');$('#bar').css('width','0%');setTimeout(function () {"
       "window.location.href = '/uploader';}, 300);}},error: function (a, b, c) {}});});"
       "var req = new XMLHttpRequest();req.open('GET', '/list?dir=/', false);req.send(null);"
       "var jdata = '{\"filelist\":' + req.responseText + '}';console.log(jdata);var jsonData = JSON.parse(jdata);"
