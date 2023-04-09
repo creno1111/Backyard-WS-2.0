@@ -175,13 +175,14 @@ bool fileExistsSettings(void){    if(!FileFS.exists(settingsFile)){ return false
 //read settings file, return settings struct
 settingsWS readSettings(void){
   if(!fileExistsSettings()) { 
-    Serial.printf("FS: Creating new settings.txt file\n");
+    // Serial.printf("FS: Creating new settings.txt file\n");
     fileSetting = FileFS.open(settingsFile, "w"); 
     fileCleanupSettings();
   }
   fileSetting = FileFS.open(settingsFile, "r+"); 
   while (fileSetting.available()) {
     String line = fileSetting.readStringUntil('\n');
+    if(line[0] == '#'){ continue; } //skip reading, comment line
     int colonIndex = line.indexOf(':');
     if (colonIndex >= 0) {
       String token = line.substring(0,colonIndex);
@@ -192,7 +193,7 @@ settingsWS readSettings(void){
     }
   }
   fileCleanupSettings();
-  Serial.printf("Settings = lat: %f, lon: %f, zip: %i\n", settings_WS.lat, settings_WS.lon, settings_WS.zip);
+  // Serial.printf("Settings = lat: %f, lon: %f, zip: %i\n", settings_WS.lat, settings_WS.lon, settings_WS.zip);
   return settings_WS;
 }
 
@@ -205,11 +206,12 @@ void writeSettings(void){
   }
   fileSetting = FileFS.open(settingsFile, "w"); // Open the settings file for writing
   if (fileSetting) {
+    fileSetting.printf("# lat, lon & zip are updated after NWS zip lookup (webpage)\n\n");
     fileSetting.printf("lat:%f\n", settings_WS.lat); // Write the latitude value
     fileSetting.printf("lon:%f\n", settings_WS.lon); // Write the longitude value
     fileSetting.printf("zip:%i\n", settings_WS.zip); // Write the zip code value
     fileCleanupSettings();
-    Serial.println("Settings written to file.");
+    // Serial.println("Settings written to file.");
   }
 }
   
