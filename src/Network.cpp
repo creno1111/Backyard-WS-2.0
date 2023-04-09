@@ -139,7 +139,7 @@ IPAddress dns2IP      = IPAddress(8, 8, 8, 8);
 #include <ESP_WiFiManager.h>              //https://github.com/khoih-prog/ESP_WiFiManager
 #include <ESP_WiFiManager_Debug.h>
 
-const char* host = "PowerMonitor";
+const char* host = "WSv2";
 
 
 // Function Prototypes

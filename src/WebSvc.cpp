@@ -21,6 +21,7 @@ extern float dayGraphTemp[96];
 extern int dayGraphHumidity[96];
 extern float dayGraphBarometric[96];
 extern float dayGraphWindspeed[96];
+extern struct settingsWS settings_WS;
 
 //extern int minute;
 
@@ -477,11 +478,13 @@ void webSocketEvent(uint8_t num, WStype_t type_ws, uint8_t * payload, size_t len
           dataSeperate(false);
           //readHeatIndex()
          //send lat and lon for NWS data
-          double lat;          double lon;
+          //double lat;          double lon;
          // if(zipRequest){
             zipRequest=false;
-            openSettings(lat,lon);
-            sprintf(msg_buf,"Ll:%.04f,%.04f",lat,lon);
+            //openSettings(lat,lon);
+            // settingsWS settings = readSettings();
+            /*settingsWS*/ readSettings();
+            sprintf(msg_buf,"Ll:%.04f,%.04f",readSettings().lat,readSettings().lon);
             dataSeperate(false);
          // }
           
@@ -544,9 +547,14 @@ void webSocketEvent(uint8_t num, WStype_t type_ws, uint8_t * payload, size_t len
           double lat,lon;
           if(!getLatLon(atoi(strTmp),lat,lon)){
             long retryTime = millis();
-            if(millis() < retryTime + 5000) getLatLon(atoi(strTmp),lat,lon);
-          }
-          saveSettings(lat,lon);
+            if(millis() < retryTime + 5000) {
+              getLatLon(atoi(strTmp),lat,lon);
+              settings_WS.zip=atoi(strTmp);
+            }
+          }else {            settings_WS.zip=atoi(strTmp);          }
+          settings_WS.lat=lat;
+          settings_WS.lon=lon;
+          writeSettings();
 
       // reset system
         } else if(  ( strcmp((char *)payload, "resetWS") == 0 ) ){

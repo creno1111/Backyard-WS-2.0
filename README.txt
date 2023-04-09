@@ -53,6 +53,8 @@ Will be uploading 3D prints, and some documentation on the ESP32 and electronics
  * 
  * 
  * TODO:
+ * - add ability to reset WS data from web, detect new setup and initialize also
+ * - better wifi forced reset (currently set reset, compile upload, disable reset, compile upload)
  * - add upload to GitHub
  * - add zip code save
  * - add zip code lookup validation

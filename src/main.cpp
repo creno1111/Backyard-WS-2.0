@@ -90,6 +90,7 @@ float dayGraphTemp[dayDataPoints];
 int dayGraphHumidity[dayDataPoints];
 float dayGraphBarometric[dayDataPoints];
 float dayGraphWindspeed[dayDataPoints];
+struct settingsWS settings_WS;   
 
 
 

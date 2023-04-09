@@ -13,7 +13,7 @@
 
 
 /****************enable the following line for the test board (missing Temp, Hum, Pressure sensors)*****************/
-//#define test_board
+#define test_board
 
 AMS_5600 ams5600;
 
