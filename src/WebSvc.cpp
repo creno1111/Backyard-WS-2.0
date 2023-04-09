@@ -68,7 +68,6 @@ void webSetup(void){
   // Handles SPIFFS file uploads, downloads & deletes
   server.on("/uploader", HTTP_GET, []() {
     server.sendHeader("Connection", "close");
-    // /* Serial print FS free space */   char fsdata[30];Serial.println(FSData(fsdata));
     server.send(200, "text/html", 
       "<meta http-equiv='Content-type' name='viewport' content='text/html, charset=utf-8, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1'/>"
       "<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>"

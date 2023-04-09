@@ -1,7 +1,6 @@
 #ifndef timekeeper_h
 #define timekeeper_h
 
-
 void timeNTPStart(void);
 bool timeCheck(void);
 void timeOffset(long minutes,bool enable);
@@ -12,17 +11,5 @@ int timeDay(void);
 int timeHour(void);
 int timeMinute(void);
 int timeSecond(void);
-
-
-
-
-
-
-
-
-
-
-
-
 
 #endif      //timekeeper_h

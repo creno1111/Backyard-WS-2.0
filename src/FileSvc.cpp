@@ -47,6 +47,7 @@ void fillData(int readIndex, int hour) {
   }
 }
 
+//close file system properly
 void fileCleanup(void){ file.flush();  file.close(); }
 
 

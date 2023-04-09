@@ -116,14 +116,12 @@ void setup() {
   timeNTPStart();
   sensorsInit();
   graphDataInit();
-  
 }
 
 void loop() {
   /************************* HW SVCS ***********************/
     //process inputs
     // serialProcess();    // process serial input  
-
     //process web functions
     webServerHandle();  // handle webserver function
     webSocketSvc();     // handle websocket function
