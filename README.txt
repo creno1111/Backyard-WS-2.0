@@ -81,5 +81,5 @@ Will be uploading 3D prints, and some documentation on the ESP32 and electronics
  * ├── NTPClient @ 3.2.1 (required: arduino-libraries/NTPClient @ ^3.1.0)
  * ├── WebSockets @ 2.3.7 (required: links2004/WebSockets @ ^2.3.6)
  * └── ezTime @ 0.8.3 (required: ropg/ezTime @ ^0.8.3)
- * 
+ *  https://canvasjs.com/ (chart Javascript) for test weather data charting in servced webpage
 */
