@@ -382,9 +382,9 @@ void handleFileList()
   deserializeJson(doc, output);
   JsonArray data = doc.as<JsonArray>();
   fileSort(data);
-  String jsonStr;
-  serializeJson(data, jsonStr);
-  server.send(200, "text/json", jsonStr);
+  String finalOutput;
+  serializeJson(data, finalOutput);
+  server.send(200, "text/json", finalOutput);
 }
 
 /***********************************************************************************************/
@@ -424,7 +424,6 @@ void webSocketEvent(uint8_t num, WStype_t type_ws, uint8_t * payload, size_t len
         //HEARTBEAT  RESPONCE
         if  ( strcmp((char *)payload, "HeartBeat") == 0 ){
           dataSeperate(true);
-          // float tmpType = amps/ 1000;
            sprintf(msg_buf, "hb:");
            dataSeperate(false);
          
@@ -551,7 +550,7 @@ void webSocketEvent(uint8_t num, WStype_t type_ws, uint8_t * payload, size_t len
           saveSettings(lat,lon);
 
       // reset system
-        } else if(  ( strcmp((char *)payload, "resetClock") == 0 ) ){
+        } else if(  ( strcmp((char *)payload, "resetWS") == 0 ) ){
           webSocket.disconnect(); delay(500); yield(); delay(200); ESP.restart();
 
 
@@ -577,7 +576,7 @@ void webSocketSvc(void){
   webSocket.loop();
 }
 
-
+// FS file list sorting helper
 void fileSort(JsonArray& fileList) {
   int n = fileList.size();
   bool swapped = true;

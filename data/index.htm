@@ -814,7 +814,7 @@ if(pingPong) {wsDied=0; pingPong=false;}
 function onPressSM()	 	{	if(smCheckbox.checked) doSend("smOn"); else doSend("smOff");	}
 function onPressAS() 	    {	if(asCheckbox.checked) doSend("asOn"); else doSend("asOff");	}
 function wsCnt() 			{	wsConnect(url);							}
-function resetAH()			{	doSend("resetAH");}
+function reset()			{	doSend("resetWS");}
 function graphSixtyMinID( )   {doSend("60mGraphON"); doSend("HeartBeat");}
 function graphTwentyFourID( ) {doSend("24hGraphON"); doSend("HeartBeat");}
 

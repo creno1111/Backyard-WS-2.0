@@ -29,7 +29,6 @@
  * 
  * 
  * TODO:
- * - add upload to GitHub
  * - add zip code save
  * - add zip code lookup validation
  * - add bootstrap to html
@@ -102,7 +101,7 @@ void graphDataInit(void){
 }
 
 void setup() {
-  setCpuFrequencyMhz(80);     //bettery power reduction
+//  setCpuFrequencyMhz(80);     //bettery power reduction
 /**************** HW Startup **********************************************************/
   Serial.begin(115200);
   Serial.println("\n\n______________________________________________");
