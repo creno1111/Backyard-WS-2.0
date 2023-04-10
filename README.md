@@ -14,7 +14,7 @@ Data charting:
  - 24 hour chars of Temperature, Humidity, Barometric pressure and Wind speed. 
  - 15 minute snapshots saved to internal FS, Space for a years worth of data.
 
-NWS Weather lookup of current location. Zip code lookup for location change.
+NWS Weather of current location. Zip code lookup for location change.
 
  - NWS Daily updates for the next 7 days
  - NWS Hourly updates for the next 24 hours
@@ -36,17 +36,17 @@ Windly.com storm radar, temp, rain, and wind radars for current location.
 [NOTE: im a hobbyist, not a professional programmer, so please excuse my coding style, etc]
 
 All code is Arduino compatible. PlatformIO is my platform of choice. Lots of things going on under the hood so plenty of libraries need to be included:
- * ├── ArduinoJson @ 6.21.1 (required: bblanchon/ArduinoJson @ ^6.21.1)
- * ├── BME280 @ 3.0.0 (required: finitespace/BME280 @ ^3.0.0)
- * ├── CircularBuffer @ 1.3.3 (required: rlogiacco/CircularBuffer @ ^1.3.3)
- * ├── ESP_WifiManager @ 1.10.2 (required: khoih-prog/ESP_WiFiManager @ ^1.3.0)
- * │   ├── ESP_DoubleResetDetector @ 1.3.1 (required: khoih-prog/ESP_DoubleResetDetector @ >=1.3.1)
- * │   │   └── LittleFS_esp32 @ 1.0.6 (required: lorol/LittleFS_esp32 @ ^1.0.6)
- * ├── ElegantOTA @ 2.2.9 (required: ayushsharma82/ElegantOTA @ ^2.2.7)
- * ├── NTPClient @ 3.2.1 (required: arduino-libraries/NTPClient @ ^3.1.0)
- * ├── WebSockets @ 2.3.7 (required: links2004/WebSockets @ ^2.3.6)
- * └── ezTime @ 0.8.3 (required: ropg/ezTime @ ^0.8.3)
- *  https://canvasjs.com/ (chart Javascript) for the local weather data charting
+ * ArduinoJson @ 6.21.1 (required: bblanchon/ArduinoJson @ ^6.21.1)
+ * BME280 @ 3.0.0 (required: finitespace/BME280 @ ^3.0.0)
+ * CircularBuffer @ 1.3.3 (required: rlogiacco/CircularBuffer @ ^1.3.3)
+ * ESP_WifiManager @ 1.10.2 (required: khoih-prog/ESP_WiFiManager @ ^1.3.0)
+ * ESP_DoubleResetDetector @ 1.3.1 (required: khoih-prog/ESP_DoubleResetDetector @ >=1.3.1)
+ * LittleFS_esp32 @ 1.0.6 (required: lorol/LittleFS_esp32 @ ^1.0.6)
+ * ElegantOTA @ 2.2.9 (required: ayushsharma82/ElegantOTA @ ^2.2.7)
+ * NTPClient @ 3.2.1 (required: arduino-libraries/NTPClient @ ^3.1.0)
+ * WebSockets @ 2.3.7 (required: links2004/WebSockets @ ^2.3.6)
+ * ezTime @ 0.8.3 (required: ropg/ezTime @ ^0.8.3)
+ * https://canvasjs.com/ (chart Javascript) for the local weather data charting
 
 But if you use PlatformIO, I believe platform will help you get the libraries loaded. One library not listed that I had to manually add, the battery state monitor: BatteryRead, Copyright (c) 2019 Pangodream (MIT license).
 
