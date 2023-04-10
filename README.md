@@ -1,4 +1,4 @@
-## ESP32 Weather Station
+# ESP32 Weather Station
 WSv2 is a self contained weather station with a built in Web server. 
 
 Hardware Sensing capabilities:
@@ -50,13 +50,14 @@ All code is Arduino compatible. PlatformIO is my platform of choice. Lots of thi
 
 But if you use PlatformIO, I believe platform will help you get the libraries loaded. One library not listed that I had to manually add, the battery state monitor: BatteryRead, Copyright (c) 2019 Pangodream (MIT license).
 
-[installing / first startup]
-I will keep current firmware releases available for manual firmware uploads. Firmware releases can be programmed to the ESP32 using software, OTA or WSv2 uploader web page. 
+# Installing / first startup
+
+Current firmware releases is available for manual firmware uploads. Firmware releases can be programmed to the ESP32 using software, OTA or WSv2 uploader web page if uploading from previous firmware. 
 
 Once Configuration portal is completed and WSv2 is running on the network, upload the files from the /src/data directory. Use the uploader webpage to upload the files, then select back or reboot. WSv2 should now be running as a Weather station.   
 
-Or you can always clone this to your system and build it yourself. Think frustration free packages lol.
+Or you can always clone this to your system and build it yourself. Think frustration free packaging :)
 
 I usually get discouraged when I have to compile a project and debug it just to try it out. Hopefully the firmware file will help you evaluate without the headaches. It even detects a board without sensors and goes into test mode. In test mode some sensors have static values. So you can jump right into the projects weather station web UI. 
 
-Note: First time sharing on GitHub
+Note: First time sharing on GitHub, hope someone finds value from this project... more to come
