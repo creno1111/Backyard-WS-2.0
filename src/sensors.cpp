@@ -173,7 +173,7 @@ float readWindSpeed(void){
   // service mph calculations every 1 second
   if(millis() > calcResult + 1000){
 
-    //windspeed angle buffer (30x oversampling)
+    //windspeed angle buffer (5x oversampling)
     static int aAbuffCnt = 0;
     int samples = 5;
     static int accAngleBuff[5]; 

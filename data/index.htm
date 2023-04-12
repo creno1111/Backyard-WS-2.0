@@ -387,7 +387,13 @@ function getNwsData(url,NwsPacketReq){
 					NwsCurrentObservation.innerHTML = NwsData3.properties.periods[forcastNum2].shortForecast;
 					NwsCurrentTemp.innerHTML = NwsData3.properties.periods[forcastNum2].temperature + " F";
 					NwsCurrentWind.innerHTML = NwsData3.properties.periods[forcastNum2].windDirection + "  " + NwsData3.properties.periods[forcastNum2].windSpeed;
-					document.getElementById("currentIcon").setAttribute('src', NwsData3.properties.periods[forcastNum2].icon);
+						//fix for nws icons not showing up properly, they are depreciated... so this might get worse.
+						var newIconFix = NwsData2.properties.periods[forcastNum2].icon;
+						var lastCommaIdx = newIconFix.lastIndexOf(",");
+						var questionMarkIdx = newIconFix.lastIndexOf("?");
+						var percentage = newIconFix.substring(lastCommaIdx+1,questionMarkIdx);
+						if(percentage == "0") newIconFix = newIconFix.substring(0,lastCommaIdx + 1) + newIconFix.substring(questionMarkIdx);					
+					document.getElementById("currentIcon").setAttribute('src', newIconFix);// NwsData3.properties.periods[forcastNum2].icon);
 					forcastNum2++;			
 					hourlyDisplay(1);		
 				}
@@ -435,8 +441,7 @@ function forecastDisplay(show){
 			//else if(tmp.includes("Night")) nwsAdd.innerHTML = "<thead><tr><th class='tg-ui0h' style='background-color:#000' colspan='2'><span style='color:#1f3b69;'>"+NwsData2.properties.periods[forcastNum].name+" - Temp " +NwsData2.properties.periods[forcastNum].temperature+" F, Wind "+NwsData2.properties.periods[forcastNum].windDirection+" "+NwsData2.properties.periods[forcastNum].windSpeed;				
 			else nwsAdd.innerHTML = nwsAdd.innerHTML = "<thead><tr><th class='tg-ui0h' colspan='2' style='background-color:#6e6c68'><span style='text-decoration:none'>"+NwsData2.properties.periods[forcastNum].name+" - Temp " +NwsData2.properties.periods[forcastNum].temperature+" F, Wind "+NwsData2.properties.periods[forcastNum].windDirection+" "+NwsData2.properties.periods[forcastNum].windSpeed;
 								nwsAdd.innerHTML = nwsAdd.innerHTML + "</span></th></tr></thead><tbody><tr><td class='tg-46ji'><span style='color:#FFF'>"+
-								"</span></td><td class='tg-nto1'>"+
-								"</td></tr><tr><td class='tg-nto1'><div><img src='"+NwsData2.properties.periods[forcastNum].icon+"'></div>"+
+								"</span></td><td class='tg-nto1'>"+ "</td></tr><tr><td class='tg-nto1'><div><img src='"+NwsData2.properties.periods[forcastNum].icon+"'></div>"+
 								"</td><td class='tg-nto1'><span style='color:#8f70ff'>"+NwsData2.properties.periods[forcastNum].detailedForecast+
 								"</td></tr></tbody>";
 			document.getElementById("NwsForecast").appendChild(nwsAdd);
@@ -467,8 +472,14 @@ function hourlyDisplay(show){
 			doOnce = false;
 			if(tmp.toLocaleTimeString('en-US') == "12:00:00 AM") {dayCount++;if(dayCount==1)nwsPart = "<thead><tr><th class='tg-ui0h' colspan='2' style='background-color:#6e6c68'><span>Tomorrow</span></th></tr></thead>";}
 			nwsAdd1.innerHTML = nwsPart +  "<tbody><tr><td class='tg-46ji' style='background-color:#000' ><span style='color:#00aaff;'>"+tmp.toLocaleTimeString('en-US',options)+
-								"</span></td><td class='tg-nto1' style='color:#00aaff;'>"+"Temp " +NwsData3.properties.periods[forcastNum2].temperature+" F, "+NwsData3.properties.periods[forcastNum2].windDirection+" Wind "+NwsData3.properties.periods[forcastNum2].windSpeed+
-								"</td></tr><tr><td class='tg-nto1'><div><img src='"+NwsData3.properties.periods[forcastNum2].icon+"'></div>"+
+								"</span></td><td class='tg-nto1' style='color:#00aaff;'>"+"Temp " +NwsData3.properties.periods[forcastNum2].temperature+" F, "+NwsData3.properties.periods[forcastNum2].windDirection+" Wind "+NwsData3.properties.periods[forcastNum2].windSpeed;
+								//fix for nws icons not showing up properly, they are depreciated... so this might get worse.
+								var newIconFix = NwsData2.properties.periods[forcastNum2].icon;
+								var lastCommaIdx = newIconFix.lastIndexOf(",");
+								var questionMarkIdx = newIconFix.lastIndexOf("?");
+								var percentage = newIconFix.substring(lastCommaIdx+1,questionMarkIdx);
+								if(percentage == "0") newIconFix = newIconFix.substring(0,lastCommaIdx + 1) + newIconFix.substring(questionMarkIdx);
+								nwsAdd1.innerHTML += "</td></tr><tr><td class='tg-nto1'><div><img src='" + newIconFix + "'></div>"+//NwsData3.properties.periods[forcastNum2].icon+"'></div>"+
 								"</td><td class='tg-nto1'><span style='color:#8f70ff;'>"+NwsData3.properties.periods[forcastNum2].shortForecast+
 								"</td></tr></tbody>";
 			nwsPart = "";
