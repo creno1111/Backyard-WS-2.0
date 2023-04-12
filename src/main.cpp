@@ -37,7 +37,6 @@
  * - add wireless ESP32 epaper weather display project (tbd)
  * - add page to display FS historic data
  * - add FS low space detection and auto FS history cleanup(fifo)
- * - fix NSW Hourly icons - sometimes not loading
  * - change HTML indicator text for humidity, temp, barometric, windspeed, etc
  * - misc code cleanup, ugh - im a lazy coder :)
  * - add 3D files to the repository
