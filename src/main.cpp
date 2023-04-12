@@ -29,11 +29,9 @@
  * 
  * 
  * TODO:
- * - add zip code save
  * - add zip code lookup validation
  * - add bootstrap to html
  * - add ability for windy displays to auto size
- * - add proper attribution to all borrowed code, library's, etc
  * - add settings page, manual upd of location, and future settings
  * - add ability to integrate wunderground API
  * - add wireless ESP32 epaper weather display project (tbd)
@@ -41,7 +39,6 @@
  * - add FS low space detection and auto FS history cleanup(fifo)
  * - fix NSW Hourly icons - sometimes not loading
  * - change HTML indicator text for humidity, temp, barometric, windspeed, etc
- * - change HTML wind speed from float to int, .00 to .99 is kinda random in low winds
  * - misc code cleanup, ugh - im a lazy coder :)
  * - add 3D files to the repository
  * 
@@ -121,20 +118,17 @@ void setup() {
 }
 
 void loop() {
-  /************************* HW SVCS ***********************/
     //process inputs
     // serialProcess();    // process serial input  
     //process web functions
     webServerHandle();  // handle webserver function
     webSocketSvc();     // handle websocket function
-  /********************************** WIFI Monitor *******************/
     //Check WiFi and reconnect if disconnected
     static long checkWiFiDly = millis();
     if(millis() > checkWiFiDly + 60000){
       checkWiFiDly = millis();
       check_WiFi();
     } 
-  /* PROJECT */
   sensorsSvc();
 
   //read to service the sensor buffers
