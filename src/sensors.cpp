@@ -13,7 +13,7 @@
 //Test mode is used for testing out the webserver and other functions without sensors.
 
 /*adjustment*/  float WindDirectionOffset = 0.0; //offset degrees, dependent on mouting position, Clockwise 1 deg per 1.00
-/*adjustment*/  float WindHoldOffset = 0.35; //Max windspeed bleeddown time (lower slower)
+///*adjustment*/  float WindHoldOffset = 1.00; //Max windspeed bleeddown time (lower slower)
 /*adjustment*/  float TempOffset = 0.0; //Temperature offset in deg F
 
 AMS_5600 ams5600;
@@ -198,8 +198,29 @@ float readWindSpeed(void){
     calcSpeed =calcSpeed / 5280.00;
     accAngle = 0;
 
-    if(calcSpeed > historySpeed) historySpeed = calcSpeed;
-    else if(historySpeed > WindHoldOffset) {historySpeed = historySpeed - WindHoldOffset; calcSpeed = historySpeed; }
+    // running average of windspeed, 30 readings with a smooting window of 10 readings
+    int WINDOW_SIZE = 10;
+    static int x=0;
+    static float windspeed[30];
+    windspeed[x] = calcSpeed;
+    x++;
+    if(x==30) x=0;
+    float smoothed[30];
+    int i, j;
+    float sum = 0.0;
+    for (i = 0; i < 30; i++) {
+        if (i < WINDOW_SIZE - 1) {
+            smoothed[i] = windspeed[i];
+            calcSpeed = smoothed[i];
+        } else {
+            sum = 0.0;
+            for (j = 0; j < WINDOW_SIZE; j++) {
+                sum += windspeed[i - j];
+            }
+            smoothed[i] = sum / WINDOW_SIZE;
+            calcSpeed = smoothed[i];
+        }
+    }
   }
   if(calcSpeed < 0.99) calcSpeed = 0.00;
   return calcSpeed; //return mph 
