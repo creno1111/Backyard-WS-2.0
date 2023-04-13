@@ -388,11 +388,11 @@ function getNwsData(url,NwsPacketReq){
 					NwsCurrentTemp.innerHTML = NwsData3.properties.periods[forcastNum2].temperature + " F";
 					NwsCurrentWind.innerHTML = NwsData3.properties.periods[forcastNum2].windDirection + "  " + NwsData3.properties.periods[forcastNum2].windSpeed;
 						//fix for nws icons not showing up properly, they are depreciated... so this might get worse.
-						var newIconFix = NwsData2.properties.periods[forcastNum2].icon;
+						var newIconFix =  NwsData3.properties.periods[forcastNum2].icon;
 						var lastCommaIdx = newIconFix.lastIndexOf(",");
 						var questionMarkIdx = newIconFix.lastIndexOf("?");
 						var percentage = newIconFix.substring(lastCommaIdx+1,questionMarkIdx);
-						if(percentage == "0") newIconFix = newIconFix.substring(0,lastCommaIdx + 1) + newIconFix.substring(questionMarkIdx);					
+						if(percentage == "0") newIconFix = newIconFix.substring(0,lastCommaIdx) + newIconFix.substring(questionMarkIdx);					
 					document.getElementById("currentIcon").setAttribute('src', newIconFix);// NwsData3.properties.periods[forcastNum2].icon);
 					forcastNum2++;			
 					hourlyDisplay(1);		
@@ -474,12 +474,12 @@ function hourlyDisplay(show){
 			nwsAdd1.innerHTML = nwsPart +  "<tbody><tr><td class='tg-46ji' style='background-color:#000' ><span style='color:#00aaff;'>"+tmp.toLocaleTimeString('en-US',options)+
 								"</span></td><td class='tg-nto1' style='color:#00aaff;'>"+"Temp " +NwsData3.properties.periods[forcastNum2].temperature+" F, "+NwsData3.properties.periods[forcastNum2].windDirection+" Wind "+NwsData3.properties.periods[forcastNum2].windSpeed;
 								//fix for nws icons not showing up properly, they are depreciated... so this might get worse.
-								var newIconFix = NwsData2.properties.periods[forcastNum2].icon;
+								var newIconFix = NwsData3.properties.periods[forcastNum2].icon;
 								var lastCommaIdx = newIconFix.lastIndexOf(",");
 								var questionMarkIdx = newIconFix.lastIndexOf("?");
 								var percentage = newIconFix.substring(lastCommaIdx+1,questionMarkIdx);
-								if(percentage == "0") newIconFix = newIconFix.substring(0,lastCommaIdx + 1) + newIconFix.substring(questionMarkIdx);
-								nwsAdd1.innerHTML += "</td></tr><tr><td class='tg-nto1'><div><img src='" + newIconFix + "' width='40' height='40'></div>"+//NwsData3.properties.periods[forcastNum2].icon+"'></div>"+
+								if(percentage == "0") newIconFix = newIconFix.substring(0,lastCommaIdx ) + newIconFix.substring(questionMarkIdx);
+								nwsAdd1.innerHTML += "</td></tr><tr><td class='tg-nto1'><div><img src='" + newIconFix + "'></div>"+//NwsData3.properties.periods[forcastNum2].icon+"'></div>"+
 								"</td><td class='tg-nto1'><span style='color:#8f70ff;'>"+NwsData3.properties.periods[forcastNum2].shortForecast+
 								"</td></tr></tbody>";
 			nwsPart = "";
@@ -514,10 +514,13 @@ function alertDisplay(show){
 				var nwsAdd = document.createElement("table");
 				nwsAdd.setAttribute("class", "tg");
 				nwsAdd.setAttribute("id", "alert"+alertNum);
-				var new1; if(NwsData4.features[alertNum].properties.headline != null) new1 = NwsData4.features[alertNum].properties.headline.replace(/\n\n+/g, '~').replace(/[\n]+/g, ' ').replace(/[~]+/g, '<br><br>');
-				var new2; if(NwsData4.features[alertNum].properties.instruction != null) new2 = NwsData4.features[alertNum].properties.instruction.replace(/\n\n+/g, '~').replace(/[\n]+/g, ' ').replace(/[~]+/g, '<br><br>');
-				var new3; if(NwsData4.features[alertNum].properties.description != null) new3 =  NwsData4.features[alertNum].properties.description.replace(/\n\n+/g, '~').replace(/[\n]+/g, ' ').replace(/[~]+/g, '<br><br>');
-				 nwsAdd.innerHTML = "<thead><tr><th class='tg-ui0h' colspan='2' style='background-color:#6e6c68'><span style='text-decoration:none'>"+ 
+				var new1; if(NwsData4.features[alertNum].properties.headline !== null) new1 = NwsData4.features[alertNum].properties.headline.replace(/\n\n+/g, '~').replace(/[\n]+/g, ' ').replace(/[~]+/g, '<br><br>');
+				else new1 = "";
+				var new2; if(NwsData4.features[alertNum].properties.instruction !== null) new2 = NwsData4.features[alertNum].properties.instruction.replace(/\n\n+/g, '~').replace(/[\n]+/g, ' ').replace(/[~]+/g, '<br><br>');
+				else new2 = "";
+				var new3; if(NwsData4.features[alertNum].properties.description !== null) new3 =  NwsData4.features[alertNum].properties.description.replace(/\n\n+/g, '~').replace(/[\n]+/g, ' ').replace(/[~]+/g, '<br><br>');
+				else new3 = "";
+				nwsAdd.innerHTML = "<thead><tr><th class='tg-ui0h' colspan='2' style='background-color:#6e6c68'><span style='text-decoration:none'>"+ 
 									NwsData4.features[alertNum].properties.event+
 									"</span></th></tr></thead><tbody><tr><td class='tg-46ji'><span style='color:#FFF'>"+
 									"</span></td><td class='tg-nto1'>"+
@@ -1049,10 +1052,9 @@ window.addEventListener("load", init, false);
 <div id="divMain">
 <table>
 <tr>
-	<td style="text-shadow: 0px 0px 3px black;">Temperature</td><td style="text-shadow: 0px 0px 3px black;">wind Direction</td><td style="text-shadow: 0px 0px 3px black;">Humidity</td>
-	</tr><tr>
-	<td style="text-shadow: 0px 0px 3px black;">Heat Index</td><td style="text-shadow: 0px 0px 3px black;">Speed </td><td style="text-shadow: 0px 0px 3px black;">Pressure</td>
-</tr>
+	<td style="text-shadow: 0px 0px 3px rgb(0, 0, 0);">Temperature</td><td style="text-shadow: 0px 0px 3px black;">Wind Direction</td><td style="text-shadow: 0px 0px 3px black;">Humidity</td>
+	</tr>
+	
 <tr>
  <td><div id="getTemp" style="margin: 0 auto;"></div></td>
  <td style="padding: 10px" ><div class="compass" style="margin: 0 auto"><div  class="direction" ><p class = "fading" id="wdirTxt"  >NA</p></div>
@@ -1061,6 +1063,9 @@ window.addEventListener("load", init, false);
 
  <td><div id="getHumidity" style="margin: 0 auto;"></div></td>
 
+</tr>
+<tr>
+	<td style="text-shadow: 0px 0px 3px black;">Heat Index</td><td style="text-shadow: 0px 0px 3px black;">Wind Speed </td><td style="text-shadow: 0px 0px 3px black;">Pressure</td>
 </tr><tr>
 	<td><div id="getIndex" style="margin: 0 auto;"></td><td><div id="getWindSpeed"  style="margin: 0 auto;font-size: 5vw"></td><td><div id="getPressure" style="margin: 0 auto;"></div></td>
 </tr>
