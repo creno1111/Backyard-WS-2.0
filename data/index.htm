@@ -479,7 +479,7 @@ function hourlyDisplay(show){
 								var questionMarkIdx = newIconFix.lastIndexOf("?");
 								var percentage = newIconFix.substring(lastCommaIdx+1,questionMarkIdx);
 								if(percentage == "0") newIconFix = newIconFix.substring(0,lastCommaIdx + 1) + newIconFix.substring(questionMarkIdx);
-								nwsAdd1.innerHTML += "</td></tr><tr><td class='tg-nto1'><div><img src='" + newIconFix + "'></div>"+//NwsData3.properties.periods[forcastNum2].icon+"'></div>"+
+								nwsAdd1.innerHTML += "</td></tr><tr><td class='tg-nto1'><div><img src='" + newIconFix + "' width='40' height='40'></div>"+//NwsData3.properties.periods[forcastNum2].icon+"'></div>"+
 								"</td><td class='tg-nto1'><span style='color:#8f70ff;'>"+NwsData3.properties.periods[forcastNum2].shortForecast+
 								"</td></tr></tbody>";
 			nwsPart = "";
