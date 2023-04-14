@@ -31,7 +31,6 @@
  * TODO:
  * - add zip code lookup validation
  * - add bootstrap to html
- * - add ability for windy displays to auto size
  * - add settings page, manual upd of location, and future settings
  * - add ability to integrate wunderground API
  * - add wireless ESP32 epaper weather display project (tbd)

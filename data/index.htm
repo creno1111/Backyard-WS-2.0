@@ -19,8 +19,46 @@ body {
   font-family: "LED_Real";
   background: #000;  
   overflow-y: scroll;
-  overflow-x: hidden;  
+  overflow-x: hidden;   
   margin: auto; 
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+div[id='animationRadar']{
+	position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%;
+}
+div[id='animationTemp']{
+	position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%;
+}
+div[id='animationAcc']{
+	position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%;
+}
+div[id='animationWind']{
+	position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%;
+}
+
+iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
 div[id^='div'] {
@@ -1098,10 +1136,10 @@ window.addEventListener("load", init, false);
 	<td><button onclick="animationWind()" type="button" id="graphButton2aw">Wind</button></td>
 </tr>
 </table>
-<div id="animationRadar" style="height:300px; width: 340; display: none"><iframe id="ifRadar" width="340" height="300" src="" frameborder="0"></iframe></div>
-<div id="animationTemp" style="height: 300px; width: 340; display: none"><iframe id="ifTemp" width="340" height="300" src="" frameborder=0"></iframe></div>
-<div id="animationAcc" style="height: 300px; width: 340; display: none"><iframe id="ifAcc" width="340" height="300"   src="" frameborder="0"></iframe></div>
-<div id="animationWind" style="height: 300px; width: 340; display: none"><iframe id="ifWind" width="340" height="300" src="" frameborder="0"></iframe></div>
+<div id="animationRadar" style="display: none"><iframe id="ifRadar" src="" frameborder="0"></iframe></div>
+<div id="animationTemp" style="display: none"><iframe id="ifTemp" src="" frameborder="0"></iframe></div>
+<div id="animationAcc" style="display: none"><iframe id="ifAcc" src="" frameborder="0"></iframe></div>
+<div id="animationWind" style="display: none"><iframe id="ifWind" src="" frameborder="0"></iframe></div>
 <hr color="#501010" size="1">
 <table>
 	<tr><td><div id="currentLocation" style="text-shadow: 0px 0px 3px black;text-align: center;padding-bottom: 7px;"><span style='color:#30a9ef'>NO NWS DATA</span></div>
