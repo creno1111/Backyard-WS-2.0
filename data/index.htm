@@ -346,6 +346,7 @@ var NwsData3;				//hourly data storage
 var NwsReload=0;			//reload indicator
 var forcastNum2=0;			//hourly forcast function control
 var alertNum=0;				//alert function control
+var zipCode;				//zip code for NWS zip input box
 
 // This is called when the page finishes loading
 function init() {
@@ -382,6 +383,18 @@ function init() {
 	
 	NwsLoad();
 	// userAction();
+	//catch enter on zip input
+	const zipTxt = document.getElementById("graphButton2zip");
+	const zipSelect = document.getElementById("graphButton2zipselect");
+	zipTxt.addEventListener('keydown', (event) => {
+	// check if key pressed is the 'Enter' key
+	if (event.key === 'Enter') {
+		// prevent default form submission behavior
+		event.preventDefault();
+		// trigger click on submit button
+		zipSelect.click();
+	}
+	});
 }
 
 //http get calls for nws data
@@ -650,7 +663,6 @@ function onOpen(evt) {
 		},cornerRadius: 6,},data: [{type: "spline",	nullDataLineDashType:  "dot" ,	dataPoints: dpsWindSpeed,color: "#6e6c68",
 		markerSize: 2}],theme: "dark1",	zoomEnabled: true
 	});
-
 }
 
 //Websocket connection closed
@@ -681,9 +693,12 @@ function onMessage(evt) {
 			//console.log(partPacketsAll[a]);
 			param = partPacketsAll[a].substring(0,3);
 			dataPacket = partPacketsAll[a].substring(3,partPacketsAll[a].length);
-			//console.log(param);
-			//console.log(dataPacket);
+			// console.log(param);
+			// console.log(dataPacket);
 			switch(param){
+				case "ZC:":	// receive zip code
+					document.getElementById("graphButton2zip").value = dataPacket;
+					break;
 				case "Tm:":		// receive temp data packets for graph
 						//decode temp data w/time
 						var partPackets = 	dataPacket.split(","); 	
@@ -1059,6 +1074,9 @@ function zipUpdate() {
 	console.log(document.getElementById("graphButton2zip").value);
 }	  
 
+
+
+
 //Initialize webpage load
 window.addEventListener("load", init, false);
 
@@ -1143,7 +1161,7 @@ window.addEventListener("load", init, false);
 <hr color="#501010" size="1">
 <table>
 	<tr><td><div id="currentLocation" style="text-shadow: 0px 0px 3px black;text-align: center;padding-bottom: 7px;"><span style='color:#30a9ef'>NO NWS DATA</span></div>
-			<div><input type="text" size="5" id="graphButton2zip"><input type="button" id="graphButton2zipselect" onclick="zipUpdate()" value="Zip"></div>
+			<div><input type="text" size="5" minlength="5" id="graphButton2zip"><input type="button" id="graphButton2zipselect" onclick="zipUpdate()" value="Zip"></div>
 		</td>
 		<td align="right" style="padding:3px"><img id="currentIcon" src="" alt="" ></td>
 		<td align="left" width="25%" >

@@ -29,7 +29,6 @@
  * 
  * 
  * TODO:
- * - add zip code lookup validation
  * - add bootstrap to html
  * - add settings page, manual upd of location, and future settings
  * - add ability to integrate wunderground API
