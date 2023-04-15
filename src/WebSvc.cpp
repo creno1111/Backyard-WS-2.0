@@ -23,6 +23,8 @@ extern float dayGraphBarometric[96];
 extern float dayGraphWindspeed[96];
 extern struct settingsWS settings_WS;
 
+static bool zipReturn = true;
+
 //extern int minute;
 
 WebServer server(HTTP_PORT);
@@ -62,6 +64,7 @@ void webSetup(void){
       {
         server.send(404, "text/html", "<html><head><meta http-equiv='refresh' content='1; url=/uploader'>");   
       }
+      zipReturn = true;
   });
 
   // FLASH EMBEDED UPLOADER 
@@ -522,6 +525,12 @@ void webSocketEvent(uint8_t num, WStype_t type_ws, uint8_t * payload, size_t len
              sprintf(msg_buf, "%s%i,%i,%i,%i,%i,%.01f,%i,%.02f,%.01f", msg_buf,timeYear(), timeMonth(), timeDay(), tmpMinute / 4 , (tmpMinute % 4) * 15 , dayGraphTemp[tmpMinute], dayGraphHumidity[tmpMinute], dayGraphBarometric[tmpMinute], dayGraphWindspeed[tmpMinute]);  
              dataSeperate(false);
           }
+          //send zip code, once on initial request
+          if(zipReturn){
+            zipReturn=false;
+            sprintf(msg_buf,"ZC:%05d", settings_WS.zip);
+            dataSeperate(false);
+          }
           //final line - send sensor data
           //netSvc=true;
           webSocket.sendTXT(num,msg_buf_tmp);
@@ -545,18 +554,15 @@ void webSocketEvent(uint8_t num, WStype_t type_ws, uint8_t * payload, size_t len
           sprintf(strTmp,"%s", workTmp.substring(workTmp.indexOf(':')+1,workTmp.indexOf('\0')));
           Serial.printf("%s\n",strTmp);
           double lat,lon;
-          if(!getLatLon(atoi(strTmp),lat,lon)){
-            long retryTime = millis();
-            if(millis() < retryTime + 5000) {
-              getLatLon(atoi(strTmp),lat,lon);
-              settings_WS.zip=atoi(strTmp);
-            }
-          }else {            settings_WS.zip=atoi(strTmp);          }
-          settings_WS.lat=lat;
-          settings_WS.lon=lon;
+          lat=settings_WS.lat;
+          lon=settings_WS.lon;
+          if(getLatLon(atoi(strTmp),lat,lon)){
+            settings_WS.zip=atoi(strTmp); 
+            settings_WS.lat=lat;
+            settings_WS.lon=lon;
+          }else {     zipReturn = true;     }
           writeSettings();
-
-      // reset system
+        // reset system
         } else if(  ( strcmp((char *)payload, "resetWS") == 0 ) ){
           webSocket.disconnect(); delay(500); yield(); delay(200); ESP.restart();
 

@@ -495,12 +495,15 @@ bool getLatLon(long zip, double &lat, double &lon){
         HTTPClient http;
         Serial.print("[HTTP] begin...\n");
         char nwsURL[512];
-        sprintf(nwsURL,"%s%i","https://graphical.weather.gov/xml/sample_products/browser_interface/ndfdXMLclient.php?listZipCodeList=",zip);
+        char tmpZip[6];
+        sprintf(tmpZip,"%05d",zip);
+        sprintf(nwsURL,"%s%s","https://graphical.weather.gov/xml/sample_products/browser_interface/ndfdXMLclient.php?listZipCodeList=",tmpZip);
         http.begin(nwsURL);
         Serial.printf("%s",nwsURL);
         Serial.print("[HTTP] GET Lat / Lon\n");
         int httpCode = http.GET();
         if(httpCode > 0) {
+          // Serial.printf("code: %d\n",httpCode);
             if(httpCode == HTTP_CODE_OK) {
                 //String payload = 
                 sprintf(nwsURL,"%s",strstr(http.getString().c_str(),"List>"));
@@ -510,6 +513,10 @@ bool getLatLon(long zip, double &lat, double &lon){
                 lat = atof(nwsURL);
                 sprintf(nwsURL,"%s", workTmp.substring(workTmp.indexOf(',')+1,workTmp.indexOf('<')));
                 lon = atof(nwsURL);
+                if(lat == 0 || lon == 0){
+                    Serial.printf("Error: Lat / Lon not found\n");
+                    return false;
+                }
             }
         } else {
             Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
