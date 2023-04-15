@@ -560,7 +560,8 @@ void webSocketEvent(uint8_t num, WStype_t type_ws, uint8_t * payload, size_t len
             settings_WS.zip=atoi(strTmp); 
             settings_WS.lat=lat;
             settings_WS.lon=lon;
-          }else {     zipReturn = true;     }
+          }else {        }
+          zipReturn = true;
           writeSettings();
         // reset system
         } else if(  ( strcmp((char *)payload, "resetWS") == 0 ) ){

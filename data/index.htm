@@ -1071,7 +1071,7 @@ function showError(error) {
 //update zip code on input
 function zipUpdate() {
 	doSend("zip:"+document.getElementById("graphButton2zip").value);
-	console.log(document.getElementById("graphButton2zip").value);
+	document.getElementById("graphButton2zip").value = "wait...";
 }	  
 
 
