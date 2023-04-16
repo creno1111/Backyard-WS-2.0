@@ -5,6 +5,7 @@
 #include <EnvironmentCalculations.h>
 #include <BME280I2C.h>
 #include <Wire.h>
+#include <filesvc.h>
 #include "as5600.h"
 
 //NOTE: if missing BME sensor, sensor auto detect will force test mode.
@@ -12,13 +13,17 @@
 //      Wind direction will always be North, wind speed will vary because analog pin will float.
 //Test mode is used for testing out the webserver and other functions without sensors.
 
-/*adjustment*/  float WindDirectionOffset = 0.0; //offset degrees, dependent on mouting position, Clockwise 1 deg per 1.00
-///*adjustment*/  float WindHoldOffset = 1.00; //Max windspeed bleeddown time (lower slower)
+/*adjustment*/  int WindDirectionOffset = 0.0; //offset degrees, dependent on mouting position, Clockwise 1 deg per 1.00
 /*adjustment*/  float TempOffset = 0.0; //Temperature offset in deg F
+float WindOffset = 0.0; //Wind speed offset in mph
+float BaroOffset = 0.0; //Barometric offset in hPa
+float HumidityOffset = 0.0; //Humidity offset in %
 
 AMS_5600 ams5600;
 
 bool test_board = false;
+
+extern struct settingsWS settings_WS;
 
 //windspeed interrupt veriables 
 int SamplingRate = 50;                //interrupts per second
@@ -94,6 +99,8 @@ bool sensorsInit()
   unsigned int timerFactor = 1000000/SamplingRate; //Calculate the time interval between two readings, or more accurately, the number of cycles between two readings
   timerAlarmWrite(timer, timerFactor, true);       //Initialize the timer
   timerAlarmEnable(timer);
+  // setOffsets();
+  settings_WS = readSettings();
   return true;
 }
 
@@ -110,9 +117,9 @@ void sensorsSvc(void){
 }
 
 String readWindDirection(void){
-  
   static long raDly = 0;
   static float heading=0.0;
+  float headingTmp = 0.0;
   if(millis() > raDly + 50){
     static float headingLR = 0.0;
     int buffers = 100;
@@ -123,7 +130,7 @@ String readWindDirection(void){
     if(test_board)    angleRead[count] =  angleRead[count] = 0;
     else angleRead[count] = convertRawAngleToDegrees(ams5600.getRawAngle()) + WindDirectionOffset;
     if(angleRead[count] > 360) angleRead[count] = angleRead[count] - 360;
-    if(angleRead[count] < 0) angleRead[count] = 360 - angleRead[count];
+    if(angleRead[count] < 0) angleRead[count] = 360 + angleRead[count];
     float readtmp = angleRead[count];
     count++;  
     if(readtmp > headingLR){if(readtmp - headingLR > 90){int adj=0; while(adj<buffers){angleRead[adj]=readtmp;adj++;}}}
@@ -131,36 +138,39 @@ String readWindDirection(void){
     int a=0;while(a<buffers){heading += angleRead[a];a++;}
     heading = heading / buffers;
     headingLR = heading;
+    headingTmp = heading + (float)settings_WS.WindDir;
+    if(headingTmp > 360.0) headingTmp = headingTmp - 360;
+    else if(headingTmp < 0.0) headingTmp = 360 + headingTmp;
   }
   //return finalAngle;
   char indicator[5];
-  if ((heading >= 11.25)&&(heading < 101.25));  // NNE to E 
+  if ((headingTmp >= 11.25)&&(headingTmp < 101.25));  // NNE to E 
   {
-    if ((heading >= 11.25) && (heading < 33.75))    {      sprintf(indicator,"nne");    } //end if NNE
-    if ((heading >= 33.75) && (heading < 56.25))    {      sprintf(indicator,"ne");    }  //end if NE
-    if ((heading >= 56.25) && (heading < 78.75))    {      sprintf(indicator,"ene");    }  //end if ENE
-    if ((heading >= 78.75) && (heading < 101.25))    {      sprintf(indicator,"e");    }  //end if E
+    if ((headingTmp >= 11.25) && (headingTmp < 33.75))    {      sprintf(indicator,"nne");    } //end if NNE
+    if ((headingTmp >= 33.75) && (headingTmp < 56.25))    {      sprintf(indicator,"ne");    }  //end if NE
+    if ((headingTmp >= 56.25) && (headingTmp < 78.75))    {      sprintf(indicator,"ene");    }  //end if ENE
+    if ((headingTmp >= 78.75) && (headingTmp < 101.25))    {      sprintf(indicator,"e");    }  //end if E
   }    //end if NNE to E
-  if ((heading >= 101.25) && (heading < 191.25))    // ESE to S
+  if ((headingTmp >= 101.25) && (headingTmp < 191.25))    // ESE to S
   {
-    if ((heading >= 101.25) && (heading < 123.75))    {      sprintf(indicator,"ese");    }  //end if ESE
-    if ((heading >= 123.75) && (heading < 146.25))    {      sprintf(indicator,"se");    }  //end if sE
-    if ((heading >= 146.25) && (heading < 168.75))    {      sprintf(indicator,"sse");    }  //end if SSE
-    if ((heading >= 168.75) && (heading < 191.25))    {      sprintf(indicator,"s");    }   //end if S
+    if ((headingTmp >= 101.25) && (headingTmp < 123.75))    {      sprintf(indicator,"ese");    }  //end if ESE
+    if ((headingTmp >= 123.75) && (headingTmp < 146.25))    {      sprintf(indicator,"se");    }  //end if sE
+    if ((headingTmp >= 146.25) && (headingTmp < 168.75))    {      sprintf(indicator,"sse");    }  //end if SSE
+    if ((headingTmp >= 168.75) && (headingTmp < 191.25))    {      sprintf(indicator,"s");    }   //end if S
   }    //end if ESE to S
-  if ((heading < 281.25) && (heading > 191.25))    // SSW to W
+  if ((headingTmp < 281.25) && (headingTmp > 191.25))    // SSW to W
   {
-    if ((heading >= 191.25) && (heading < 213.75))    {      sprintf(indicator,"ssw");    }  //end if SSW
-    if ((heading >= 213.75) && (heading < 236.25))    {      sprintf(indicator,"sw");    }   //end if SW
-    if ((heading >= 236.25) && (heading < 258.75))    {      sprintf(indicator,"wsw");    }  //end if WSW
-    if ((heading >= 258.75) && (heading < 281.25))    {      sprintf(indicator,"w");    }    //end if W
+    if ((headingTmp >= 191.25) && (headingTmp < 213.75))    {      sprintf(indicator,"ssw");    }  //end if SSW
+    if ((headingTmp >= 213.75) && (headingTmp < 236.25))    {      sprintf(indicator,"sw");    }   //end if SW
+    if ((headingTmp >= 236.25) && (headingTmp < 258.75))    {      sprintf(indicator,"wsw");    }  //end if WSW
+    if ((headingTmp >= 258.75) && (headingTmp < 281.25))    {      sprintf(indicator,"w");    }    //end if W
   }    //end if SSW to W
-  if ((heading >= 281.25) || (heading < 11.25))    // WNW to N
+  if ((headingTmp >= 281.25) || (headingTmp < 11.25))    // WNW to N
   {
-    if ((heading >= 281.25) && (heading < 303.75))    {      sprintf(indicator,"wnw");    }    //end if WNW
-    if ((heading >= 303.75) && (heading < 326.25))    {      sprintf(indicator,"nw");    }  //end if NW
-    if ((heading >= 326.25) && (heading < 348.75))    {      sprintf(indicator,"nnw");    }  //end if NNW
-    if ((heading >= 348.75) || (heading < 11.25))    {      sprintf(indicator,"n");    }   //end if N
+    if ((headingTmp >= 281.25) && (headingTmp < 303.75))    {      sprintf(indicator,"wnw");    }    //end if WNW
+    if ((headingTmp >= 303.75) && (headingTmp < 326.25))    {      sprintf(indicator,"nw");    }  //end if NW
+    if ((headingTmp >= 326.25) && (headingTmp < 348.75))    {      sprintf(indicator,"nnw");    }  //end if NNW
+    if ((headingTmp >= 348.75) || (headingTmp < 11.25))    {      sprintf(indicator,"n");    }   //end if N
   }
   return indicator;
 }
@@ -223,7 +233,7 @@ float readWindSpeed(void){
     }
   }
   if(calcSpeed < 0.99) calcSpeed = 0.00;
-  return calcSpeed; //return mph 
+  return calcSpeed + settings_WS.WindOffset;
 }
 
 //return temp readings averaged out over 30 readings. ???.?? f
@@ -238,7 +248,7 @@ float readTemp(void){
         for(int a=0; a<readings;a++){ readSensor += tempReadings[a] * 100;  }
         SensorReading = ((float)(readSensor / readings)/100) + TempOffset;
     } else if(ticker % 2 == 1){ readTrigger=true; }
-     if(SensorReading < 200) return SensorReading;
+     if(SensorReading < 200) return SensorReading + settings_WS.TempOffset;
      else return 200; 
 }
 
@@ -254,7 +264,7 @@ int readHumidity(void){
         for(int a=0; a<readings;a++){ readSensor += humidityReadings[a]; }
         SensorReading = readSensor / readings;
     } else if(ticker % 2 == 1){ readTrigger=true; }
-    if(SensorReading < 200 && SensorReading > 0) return SensorReading;
+    if(SensorReading < 200 && SensorReading > 0) return SensorReading + settings_WS.HumidityOffset;
     else return 200; 
 }
 
@@ -271,7 +281,7 @@ float readPressure(void){
         for(int a=0; a<readings;a++){ readSensor += presReadings[a] * 100;  }
         SensorReading = (float)(readSensor / readings)/100;
     } else if(ticker % 2 == 1){ readTrigger=true; }
-     if(SensorReading < 200) return SensorReading;
+     if(SensorReading < 200) return SensorReading + settings_WS.BaroOffset;
      else return 200; 
 }
 

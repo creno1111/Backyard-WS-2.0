@@ -7,6 +7,7 @@ inline TwoWire I2C_2 = TwoWire(1);
 inline bool secRotarySensor = false;
 inline bool netSvc = false;
 
+void setOffsets(void);
 int batteryRead(void);
 bool sensorsInit(void);
 float readTemp(void);

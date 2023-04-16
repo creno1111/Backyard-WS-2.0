@@ -563,6 +563,39 @@ void webSocketEvent(uint8_t num, WStype_t type_ws, uint8_t * payload, size_t len
           }else {        }
           zipReturn = true;
           writeSettings();
+        //receive request for settings
+        } else if(  ( strcmp((char *)payload, "SettingsRead") == 0 ) ){
+          sprintf(msg_buf,"DT:%i", settings_WS.DST);
+          webSocket.sendTXT(num,msg_buf);
+          sprintf(msg_buf,"WD:%i", settings_WS.WindDir);
+          webSocket.sendTXT(num,msg_buf);
+          sprintf(msg_buf,"WO:%f", settings_WS.WindOffset);
+          webSocket.sendTXT(num,msg_buf);
+          sprintf(msg_buf,"TO:%f", settings_WS.TempOffset);
+          webSocket.sendTXT(num,msg_buf);          
+          sprintf(msg_buf,"BO:%f", settings_WS.BaroOffset);
+          webSocket.sendTXT(num,msg_buf);
+          sprintf(msg_buf,"HO:%f", settings_WS.HumidityOffset);
+          webSocket.sendTXT(num,msg_buf);
+          Serial.printf("Settings Read, %f, %f, %d\n",settings_WS.WindOffset, settings_WS.TempOffset, settings_WS.BaroOffset);
+        //receive request for settings write
+        } else if( strncmp((char *)payload, "SettingsWrite", 13) == 0 ){
+          char * pch;
+          pch = strtok ((char *)payload,":");
+          Serial.printf("1 %s\n",pch);
+          pch = strtok (NULL, ":");
+          settings_WS.DST = atoi(pch);
+          pch = strtok (NULL, ":");
+          settings_WS.WindDir = atoi(pch);
+          pch = strtok (NULL, ":");
+          settings_WS.WindOffset = atof(pch);
+          pch = strtok (NULL, ":");
+          settings_WS.TempOffset = atof(pch);
+          pch = strtok (NULL, ":");
+          settings_WS.HumidityOffset = atof(pch);
+          pch = strtok (NULL, ":");
+          settings_WS.BaroOffset = atof(pch);
+          writeSettings();
         // reset system
         } else if(  ( strcmp((char *)payload, "resetWS") == 0 ) ){
           webSocket.disconnect(); delay(500); yield(); delay(200); ESP.restart();

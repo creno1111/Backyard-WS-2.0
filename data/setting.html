@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-type" name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"/>
+<title>WSv2</title>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> 
+<style>
+        body {
+        height:100vh;  
+        width:100vw;  
+        font-family: "LED_Real";
+        background: #000;  
+        overflow-y: scroll;
+        overflow-x: hidden;   
+        margin: auto; 
+        color: red;
+        }
+
+        body::-webkit-scrollbar {
+        display: none;
+        }
+
+        div[id^='div'] {
+        margin: auto;
+        width: 90%;
+        padding: 3px;
+        border-radius:10px; 
+        }
+        #divMain {
+        width: 330px;
+        text-align: center;
+        border: 1px solid red;
+        }
+
+
+
+        .button {
+        border-radius:10px;
+        width: 290px;
+        background-color: #000000;  
+        color: #30a9ef;  
+        padding: 16px;  
+        font-size: 11px; 
+        font-weight: bold;  
+        border: 1px solid #00aaff; 
+        border-color: #00aaff; 
+        }
+
+        .btn2 {
+        border-radius:10px;
+        background-color: #400900;
+        padding: 10px;
+        color: #30a9ef; 
+        width: 200px;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        }
+
+        table {
+        width: 100%;
+        padding: 0px;
+        color: #30a9ef;
+        } 
+
+        td, th {
+        padding: 0px;
+        font-size: 12px;
+        text-align: left;
+        }
+
+        tr.bordered {
+            border-bottom: 1px solid rgb(166, 2, 2);
+        }
+
+        .tg  {border-collapse:collapse;border-color:black;border-spacing:0;border-style:solid;border-width:1px;}
+        .tg td{border-style:solid;border-width:0px;font-family:Arial, sans-serif;font-size:14px;overflow:hidden;
+        padding:0px 5px;word-break:normal;}
+        .tg th{border-style:solid;border-width:0px;font-family:Arial, sans-serif;font-size:14px;font-weight:normal;
+        overflow:hidden;padding:0px 5px;word-break:normal;}
+        .tg .tg-nto1{background-color:#000000;border-color:inherit;text-align:left;vertical-align:top}
+        .tg .tg-ui0h{background-color:#a4a4a4;border-color:inherit;color:#000000;font-weight:bold;text-align:left;text-decoration: none;
+        vertical-align:top}
+        .tg .tg-46ji{background-color:#2b1a6d;border-color:inherit;font-weight:bold;text-align:left;vertical-align:top;width:100px;}
+</style>
+<script language="javascript" type="text/javascript">
+        var DaylightST = 1;
+        var WindDirOffset = 0;
+        var WindOffset = 0.0;
+        var TempOffset = 0.0;
+        var HumOffset = 0.0;
+        var BaroOffset = 0.0;
+        var url = "ws://" + window.location.host + ":1883/";
+
+        // This is called when the page finishes loading
+    function init() {
+        //initialize on load
+        document.getElementById("DST").checked = DaylightST;
+        document.getElementById("windDirectionOffset").value = WindDirOffset;
+        document.getElementById("windSpeedOffset").value = WindOffset;
+        document.getElementById("TemperatureOffset").value = TempOffset;
+        document.getElementById("HumidityOffset").value = HumOffset;
+        document.getElementById("BarometricOffset").value = BaroOffset;
+
+        document.getElementById("windDirectionOffset").addEventListener("input", function() {
+            WindDirOffset = document.getElementById("windDirectionOffset").value
+        });
+        document.getElementById("windSpeedOffset").addEventListener("input", function() {
+            WindOffset = document.getElementById("windSpeedOffset").value
+        });        
+        document.getElementById("TemperatureOffset").addEventListener("input", function() {
+            TempOffset = document.getElementById("TemperatureOffset").value
+        });
+        document.getElementById("HumidityOffset").addEventListener("input", function() {
+            HumOffset = document.getElementById("HumidityOffset").value
+        });
+        document.getElementById("BarometricOffset").addEventListener("input", function() {
+            BaroOffset = document.getElementById("BarometricOffset").value
+        });
+        wsConnect(url);
+    }
+
+    //Websocket connection request
+    function wsConnect(url) {
+        // Connect to WebSocket server
+        websocket = new WebSocket(url);
+        // Assign callbacks
+        websocket.onopen = function(evt) { onOpen(evt); };
+        websocket.onclose = function(evt) { onClose(evt) };
+        websocket.onmessage = function(evt) { onMessage(evt) };
+        websocket.onerror = function(evt) { onError(evt) };
+    }
+
+    //Websocket connection established
+    function onOpen(evt) {
+        reload();
+    }
+
+    //Websocket connection closed
+    function onClose(evt) {
+        // Log disconnection state
+        console.log("Disconnected");
+        websocket.close();
+        // Try to reconnect after a few seconds
+        reconnectWS= setTimeout(function() { wsConnect(url) }, 2000);
+    }
+
+    //Websocket message received
+    function onMessage(evt) {
+        console.log(evt.data);
+        var param = evt.data.substring(0,3);
+        var dataPacket = evt.data.substring(3,evt.data.length);
+        //console.log(dataPacket);
+        switch(param){
+            case "DT:":	
+                DaylightST = parseInt(dataPacket);
+                if(DaylightST == 1)
+                    document.getElementById("DST").checked = true;
+                else
+                    document.getElementById("DST").checked = false;
+                document.getElementById("DST").checked = DaylightST;
+                break;
+            case "WD:":	
+            WindDirOffset = parseInt(dataPacket);
+                document.getElementById("windDirectionOffset").value = WindDirOffset;
+                break;
+            case "WO:":	
+            WindOffset = parseFloat(dataPacket);
+                document.getElementById("windSpeedOffset").value = WindOffset;
+                break;
+            case "TO:":	
+            TempOffset = parseFloat(dataPacket);
+                document.getElementById("TemperatureOffset").value = TempOffset;
+                break;
+            case "HO:":	
+            HumOffset = parseFloat(dataPacket);
+                document.getElementById("HumidityOffset").value = HumOffset;
+                break;   
+            case "BO:":	
+                    BaroOffset = parseFloat(dataPacket);
+                    document.getElementById("BarometricOffset").value = BaroOffset;
+                break;   
+            default:
+                break;
+        }
+    }
+
+    //force reload of settings
+    function reload() {  doSend("SettingsRead"); }
+
+    //save settings
+    function save() { 
+        doSend("SettingsWrite:" + DaylightST + ":" + WindDirOffset + ":" + WindOffset + ":" + TempOffset + ":" + HumOffset + ":" + BaroOffset); 
+    }    
+
+    //Websock data send
+    function doSend(message) { console.log("Sending: " + message);  websocket.send(message); }
+
+    //Websocket error events
+    function onError(evt) { console.log("ERROR: " + evt.data); }    
+
+    //Read DTS checkbox
+    function DSTupd() { 
+    if(DaylightST === 1){ DaylightST = 0; } else { DaylightST = 1; }
+    document.getElementById("DST").checked = DaylightST;
+    }
+
+    //Initialize webpage load
+window.addEventListener("load", init, false);    
+</script>
+</head>
+<body id="index" text="#ffffff" >
+        <div id="divMain"><p><button class="btn2"  onclick="location.href='/';"><- BACK</button></p></div>
+        <div id="divMain">
+        <table>
+        <tr><td>
+            <!-- DST CHECKBOX -->
+            <button type="button" onclick="DSTupd()" class="button" id="daylight-savings-time-btn">Daylight Savings Time 
+            <input type="checkbox" id="DST" onclick="DSTupd()" ></button> 
+        </td></tr>
+        <tr><td> <hr color="#501010" size="1">
+            <!-- Wind speed offset -->
+            Wind direction Offset (degrees)<input type="number" id="windDirectionOffset"  class="button" step="1">
+        </td></tr>
+        <tr><td> <hr color="#501010" size="1">
+            <!-- Wind speed offset -->
+            Wind speed Offset (mph)<input type="number" id="windSpeedOffset"  class="button" step="0.1">
+        </td></tr>                
+        <tr><td> <hr color="#501010" size="1">
+            <!-- Temp Offset -->
+            Temperature Offset (f)<input type="number" id="TemperatureOffset"  class="button" step="0.1"> 
+        </td></tr>
+        <tr><td> <hr color="#501010" size="1">
+            <!-- Humidity Offset -->
+            Humidity Offset<input type="number" id="HumidityOffset"  class="button" step="0.1"> 
+        </td></tr>  
+        <tr><td> <hr color="#501010" size="1">
+            <!-- Barometric Offset -->
+            Barometric Pressure Offset<input type="number" id="BarometricOffset"  class="button" step="0.1"> 
+        </td></tr>    
+        </table>
+        <hr color="#501010" size="1">
+        <!-- reload button -->
+        <p><button type="button" onclick="reload()" id="reloadBtn" class="btn2">Reload from file</button></p>
+        <!-- save button -->
+        <p><button type="button" onclick="save()" id="savetBtn" class="btn2">Save to file</button></p>
+        
+        </div>
+</body>
+</head>
+</html>

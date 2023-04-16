@@ -190,10 +190,15 @@ settingsWS readSettings(void){
       if(token == "lat"){        settings_WS.lat = result.toFloat();} 
       else if(token == "lon"){   settings_WS.lon = result.toFloat();} 
       else if(token == "zip"){   settings_WS.zip = result.toInt();  }
+      else if(token == "DST"){   settings_WS.DST = result.toInt();  }
+      else if(token == "WindDir"){   settings_WS.WindDir = result.toInt();  }
+      else if(token == "TmpOffset"){   settings_WS.TempOffset = result.toFloat();  }
+      else if(token == "HumOffset"){   settings_WS.HumidityOffset = result.toFloat();  }
+      else if(token == "BarOffset"){   settings_WS.BaroOffset = result.toFloat();  }
+      else if(token == "WindOffset"){   settings_WS.WindOffset = result.toFloat();  }
     }
   }
   fileCleanupSettings();
-  // Serial.printf("Settings = lat: %f, lon: %f, zip: %i\n", settings_WS.lat, settings_WS.lon, settings_WS.zip);
   return settings_WS;
 }
 
@@ -207,11 +212,18 @@ void writeSettings(void){
   fileSetting = FileFS.open(settingsFile, "w"); // Open the settings file for writing
   if (fileSetting) {
     fileSetting.printf("# lat, lon & zip are updated after NWS zip lookup (webpage)\n\n");
+    fileSetting.printf("# Other settings are set from the settings page\n\n");
     fileSetting.printf("lat:%f\n", settings_WS.lat); // Write the latitude value
     fileSetting.printf("lon:%f\n", settings_WS.lon); // Write the longitude value
     fileSetting.printf("zip:%i\n", settings_WS.zip); // Write the zip code value
+    fileSetting.printf("DST:%i\n", settings_WS.DST);
+    fileSetting.printf("WindDir:%i\n", settings_WS.WindDir);
+    fileSetting.printf("TmpOffset:%f\n", settings_WS.TempOffset); 
+    fileSetting.printf("HumOffset:%f\n", settings_WS.HumidityOffset);
+    fileSetting.printf("BarOffset:%f\n", settings_WS.BaroOffset); 
+    fileSetting.printf("WindOffset:%f\n", settings_WS.WindOffset); 
+    fileSetting.printf("\n# End of file");
     fileCleanupSettings();
-    // Serial.println("Settings written to file.");
   }
 }
   

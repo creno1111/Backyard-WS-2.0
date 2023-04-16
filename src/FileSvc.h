@@ -5,6 +5,12 @@ struct settingsWS {
   double lat;
   double lon;
   int zip;
+  int DST;
+  int8_t WindDir;
+  double WindOffset;
+  double TempOffset;
+  double BaroOffset;
+  double HumidityOffset;
 };
 
 void saveHourlyData(void);

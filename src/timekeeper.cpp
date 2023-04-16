@@ -4,6 +4,7 @@
 #include "time.h"
 #include "Network.h"
 #include "WebSvc.h"
+#include "fileSvc.h"
 
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP,"pool.ntp.org", 0, 60000);
@@ -13,7 +14,7 @@ long offsetSet=0;
 bool offsetEn=false;
 time_t epoc;
 
-
+extern struct settingsWS settings_WS;
 
 //initialize NTP services and set time offset
 void timeNTPStart(void){
@@ -41,7 +42,9 @@ bool timeCheck(void){
         if(time==3){ Serial.printf("No NTP sync after %i tries.\n", time); timeSet=false;  }  //failed time check
         timeSet=true;
     }
-    epoc = timeClient.getEpochTime();
+    int epocDST = 0;
+    if(settings_WS.DST == 0) epocDST = 3600;  //DST offset
+    epoc = timeClient.getEpochTime() + epocDST;
     ts = *localtime(&epoc);
     if(setMinute!=99){
         ts.tm_min = setMinute;
