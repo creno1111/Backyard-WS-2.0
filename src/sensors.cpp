@@ -13,12 +13,6 @@
 //      Wind direction will always be North, wind speed will vary because analog pin will float.
 //Test mode is used for testing out the webserver and other functions without sensors.
 
-/*adjustment*/  int WindDirectionOffset = 0.0; //offset degrees, dependent on mouting position, Clockwise 1 deg per 1.00
-/*adjustment*/  float TempOffset = 0.0; //Temperature offset in deg F
-float WindOffset = 0.0; //Wind speed offset in mph
-float BaroOffset = 0.0; //Barometric offset in hPa
-float HumidityOffset = 0.0; //Humidity offset in %
-
 AMS_5600 ams5600;
 
 bool test_board = false;
@@ -128,7 +122,7 @@ String readWindDirection(void){
     static int count =0 ;
     if(count==buffers) count = 0;
     if(test_board)    angleRead[count] =  angleRead[count] = 0;
-    else angleRead[count] = convertRawAngleToDegrees(ams5600.getRawAngle()) + WindDirectionOffset;
+    else angleRead[count] = convertRawAngleToDegrees(ams5600.getRawAngle());
     if(angleRead[count] > 360) angleRead[count] = angleRead[count] - 360;
     if(angleRead[count] < 0) angleRead[count] = 360 + angleRead[count];
     float readtmp = angleRead[count];
@@ -246,7 +240,7 @@ float readTemp(void){
     if(ticker % 2 == 0 && readTrigger){  if(ticker!=0) ticker = ticker / 2;   readTrigger = false;
         tempReadings[ticker] = temp;
         for(int a=0; a<readings;a++){ readSensor += tempReadings[a] * 100;  }
-        SensorReading = ((float)(readSensor / readings)/100) + TempOffset;
+        SensorReading = ((float)(readSensor / readings)/100);
     } else if(ticker % 2 == 1){ readTrigger=true; }
      if(SensorReading < 200) return SensorReading + settings_WS.TempOffset;
      else return 200; 

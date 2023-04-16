@@ -577,7 +577,7 @@ void webSocketEvent(uint8_t num, WStype_t type_ws, uint8_t * payload, size_t len
           webSocket.sendTXT(num,msg_buf);
           sprintf(msg_buf,"HO:%f", settings_WS.HumidityOffset);
           webSocket.sendTXT(num,msg_buf);
-          Serial.printf("Settings Read, %f, %f, %d\n",settings_WS.WindOffset, settings_WS.TempOffset, settings_WS.BaroOffset);
+          // Serial.printf("Settings Read, %f, %f, %d\n",settings_WS.WindOffset, settings_WS.TempOffset, settings_WS.BaroOffset);
         //receive request for settings write
         } else if( strncmp((char *)payload, "SettingsWrite", 13) == 0 ){
           char * pch;

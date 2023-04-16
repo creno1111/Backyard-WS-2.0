@@ -25,8 +25,6 @@ void timeNTPStart(void){
 
 //Check for time sync. true if synced, false if not
 bool timeCheck(void){ 
-    // write a funtion to add to numbers together and return the result
-    
 //added for debugging purposes, related var usage in the timecheck() routine
     static bool timeSet = false;
     static long NTPsyncDly = 0;
@@ -60,7 +58,9 @@ bool timeCheck(void){
 void timeOffset(long minutes,bool enable){
     if(enable) offsetEn = true;
     else offsetEn = false;
-    epoc = timeClient.getEpochTime() - minutes; 
+    int epocDST = 0;
+    if(settings_WS.DST == 0) epocDST = 3600;  //DST offset    
+    epoc = timeClient.getEpochTime() - minutes + epocDST;; 
     tsOffset = *localtime(&epoc);
 }
 
@@ -113,16 +113,16 @@ int timeSecond(void){
     else return ts.tm_sec;
 }
 
-//take a date and time as an imput and return the epoc time
-time_t timeMake(int year, int month, int day, int hour, int minute, int second){
-    struct tm t = { 0 };  // set all fields to 0
-    t.tm_year = year - 1900;
-    t.tm_mon = month;
-    t.tm_mday = day;
-    t.tm_hour = hour;
-    t.tm_min = minute;
-    t.tm_sec = second;
-    t.tm_isdst = -1;  // Let system determine if DST was in effect
-    return mktime(&t);
-}
+// //take a date and time as an imput and return the epoc time
+// time_t timeMake(int year, int month, int day, int hour, int minute, int second){
+//     struct tm t = { 0 };  // set all fields to 0
+//     t.tm_year = year - 1900;
+//     t.tm_mon = month;
+//     t.tm_mday = day;
+//     t.tm_hour = hour;
+//     t.tm_min = minute;
+//     t.tm_sec = second;
+//     t.tm_isdst = -1;  // Let system determine if DST was in effect
+//     return mktime(&t);
+// }
 
