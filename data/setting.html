@@ -40,7 +40,7 @@
         background-color: #000000;  
         color: #30a9ef;  
         padding: 16px;  
-        font-size: 11px; 
+        font-size:18px; 
         font-weight: bold;  
         border: 1px solid #00aaff; 
         border-color: #00aaff; 
@@ -56,6 +56,12 @@
         outline: none;
         cursor: pointer;
         }
+        /* Style when button is clicked */
+        .btn2:active {
+        background-color: #8a1200;
+        box-shadow: 0 3px #714600;
+        transform: translateY(2px);
+        }
 
         table {
         width: 100%;
@@ -65,7 +71,7 @@
 
         td, th {
         padding: 0px;
-        font-size: 12px;
+        font-size: 18px;
         text-align: left;
         }
 
@@ -240,9 +246,9 @@ window.addEventListener("load", init, false);
         </table>
         <hr color="#501010" size="1">
         <!-- reload button -->
-        <p><button type="button" onclick="reload()" id="reloadBtn" class="btn2">Reload from file</button></p>
+        <p><button type="button" onclick="reload()" id="reloadBtn" class="btn2">Reload current settings</button></p>
         <!-- save button -->
-        <p><button type="button" onclick="save()" id="savetBtn" class="btn2">Save to file</button></p>
+        <p><button type="button" onclick="save()" id="savetBtn" class="btn2">Save current settings</button></p>
         
         </div>
 </body>

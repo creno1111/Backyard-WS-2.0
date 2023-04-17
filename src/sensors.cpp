@@ -202,17 +202,18 @@ float readWindSpeed(void){
     calcSpeed =calcSpeed / 5280.00;
     accAngle = 0;
 
-    // running average of windspeed, 30 readings with a smooting window of 10 readings
-    int WINDOW_SIZE = 10;
+    // running average of windspeed, with a smooting window
+    int WINDOW_SIZE = 25; //must be lower than Samples
+    int Samples = 60;
     static int x=0;
-    static float windspeed[30];
+    static float windspeed[60 /*Match Samples*/];
     windspeed[x] = calcSpeed;
     x++;
-    if(x==30) x=0;
-    float smoothed[30];
+    if(x==Samples) x=0;
+    float smoothed[60/*Match Samples*/];
     int i, j;
     float sum = 0.0;
-    for (i = 0; i < 30; i++) {
+    for (i = 0; i < Samples; i++) {
         if (i < WINDOW_SIZE - 1) {
             smoothed[i] = windspeed[i];
             calcSpeed = smoothed[i];
