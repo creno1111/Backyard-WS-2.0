@@ -1,7 +1,7 @@
 # ESP32 Weather Station
 WSv2 is a self contained weather station with a built in Web server. 
 ![alt text](https://github.com/creno1111/Backyard-WS-2.0/blob/master/img/WSv2%20Combined.png?raw=true)
-(Redering of current weatherstaion, along with a cut-away. Magnetic sensors and screws are missing from cut-away)
+(Rendering of current weatherstaion, along with a cut-away. Magnetic sensors and screws are missing from cut-away)
 
 Hardware enclosure:
  - Fully 3D printed enclosure
