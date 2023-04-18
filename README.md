@@ -1,6 +1,13 @@
 # ESP32 Weather Station
 WSv2 is a self contained weather station with a built in Web server. 
+![alt text](https://github.com/creno1111/Backyard-WS-2.0/blob/master/img/WSv2%20Combined.png?raw=true)
+(Redering of current weatherstaion, along with a cut-away. Magnetic sensors and screws are missing from cut-away)
 
+Hardware enclosure:
+ - Fully 3D printed enclosure
+ - Small brass rods with bearings for Wind Direction and Anemometer rotation
+ - Screws and Epoxy in a couple places
+ 
 Hardware Sensing capabilities:
  - Temperature
  - Humidity
@@ -14,23 +21,28 @@ Data charting:
  - 24 hour chars of Temperature, Humidity, Barometric pressure and Wind speed. 
  - 15 minute snapshots saved to internal FS, Space for a years worth of data.
 
-NWS Weather of current location. Zip code lookup for location change.
+NWS (Nation weather service) of current location. Zip code lookup for location change.
 
  - NWS Daily updates for the next 7 days
- - NWS Hourly updates for the next 24 hours
+ - NWS Hourly updates for the next 24 hours+
  - NWS Weather alerts
 
-Windly.com storm radar, temp, rain, and wind radars for current location.
+Windly.com storm radar/lightning, temp, rain, and wind radars for current location.
+
+![alt text](https://github.com/creno1111/Backyard-WS-2.0/blob/master/img/WSv2%20Main%20web%20page.PNG?raw=true)
+![alt text](https://github.com/creno1111/Backyard-WS-2.0/blob/master/img/WSv2%20Main%20web%20page%20(graphs).PNG?raw=true)
+(Main web page compact and with live graphs, Internet Radar and NWS local forcast)
 
 ## Hardware
 
  - ESP32 Lolin32 1.0.0 (Picked for low power mode, will work with others esp32's)
- - BME280  (Amazon for 24.99)
- - AS5600 Magnetic encoder (Amazon 3 pack for 10.99)
- - 4mm brass tube (Amazon 6.99)
+ - BME280  (Amazon for $24.99)
+ - AS5600 Magnetic encoder (Amazon 3 pack for $10.99)
+ - 4mm brass tube (Amazon for $6.99)
+ - Ball Bearing 5x8x2.5mm (Amazon 10 pack $9.99)
  - Some M3 screws or other fasteners of same size
- - Misc hardware for soldering
- - 3D printer and a 1kg of filament
+ - Soldering station
+ - 3D printer and filament
 
 ## Software 
 [NOTE: im a hobbyist, not a professional programmer, so please excuse my coding style, etc]
@@ -56,8 +68,11 @@ Current firmware releases is available for manual firmware uploads. Firmware rel
 
 Once Configuration portal is completed and WSv2 is running on the network, upload the files from the /src/data directory. Use the uploader webpage to upload the files, then select back or reboot. WSv2 should now be running as a Weather station.   
 
-Or you can always clone this to your system and build it yourself. Think frustration free packaging :)
+![alt text](https://github.com/creno1111/Backyard-WS-2.0/blob/master/img/WSv2%20FS%20utility.PNG?raw=true)
 
-I usually get discouraged when I have to compile a project and debug it just to try it out. Hopefully the firmware file will help you evaluate without the headaches. It even detects a board without sensors and goes into test mode. In test mode some sensors have static values. So you can jump right into the projects weather station web UI. 
+(Built in FS utility to manage firmware, partition, files)
+
+Or you can always clone this to your system and build it yourself.
+
 
 Note: First time sharing on GitHub, hope someone finds value from this project... more to come
