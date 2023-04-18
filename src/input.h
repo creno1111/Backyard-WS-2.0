@@ -3,4 +3,4 @@
 
 void serialProcess(void);
 
-#endif //input_h
+#endif //input_hx
