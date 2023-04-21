@@ -36,7 +36,7 @@ Windly.com storm radar/lightning, temp, rain, and wind radars for current locati
 
 ## Hardware
 
- - ESP32 Lolin32 1.0.0 (Picked for low power mode, will work with others esp32's)
+ - ESP32 Lolin32 1.0.0 (Picked for low power mode, will work with other esp32's)
  - BME280  (Amazon for $24.99)
  - AS5600 Magnetic encoder (Amazon 3 pack for $10.99)
  - 4mm brass tube (Amazon for $6.99)
