@@ -26,7 +26,7 @@ extern struct settingsWS settings_WS;
 //windspeed interrupt veriables 
 int SamplingRate = 50;                //interrupts per second
 int IRAM_ATTR endAngle=0;             //measured angle since last read
-static IRAM_ATTR int accAngle = 0;    //total accumulated angle
+static IRAM_ATTR double accAngle = 0;    //total accumulated angle
 static long calcResult = 0;            
 static IRAM_ATTR int startAngle =0;   //measured angle from prior read
 hw_timer_t * timer = NULL;            //create timer instance to attach to interrupt
@@ -120,9 +120,9 @@ String readWindDirection(void){
   float headingTmp = 0.0;
   if(millis() > raDly + 50){
     static float headingLR = 0.0;
-    int buffers = 100;
+    int buffers =400;
     raDly=millis();
-    static float angleRead[100];
+    static float angleRead[400];
     static int count =0 ;
     if(count==buffers) count = 0;
     else angleRead[count] = test_board ? random(0,360) : convertRawAngleToDegrees(ams5600.getRawAngle());
@@ -176,21 +176,20 @@ String readWindDirection(void){
 
 //return windspeed reading in MPH
 float readWindSpeed(void){
-  static float historySpeed=0;
   static float calcSpeed = 0;
   static long startTime=millis();
 
   // service mph calculations every 1 second
   if(millis() > calcResult + 1000){
     float offsetTime = (millis() - calcResult)/1000; //calculate time from last reading
-    if((float)accAngle < offsetTime*900) accAngle = 0; //remove analog noise on no wind conditions
+    if(accAngle < offsetTime*900) accAngle = 0; //remove analog noise on no wind conditions
 
     // //windspeed angle buffer (5x oversampling) 
     static int aAbuffCnt = 0;
     int samples = 5;
-    static int accAngleBuff[5]; 
+    static double accAngleBuff[5]; 
     if(aAbuffCnt == samples) aAbuffCnt = 0;
-    accAngleBuff[aAbuffCnt] = (float)accAngle / offsetTime;
+    accAngleBuff[aAbuffCnt] = accAngle / offsetTime;
     accAngle =0;
     aAbuffCnt++;
     int aabuf = 0;
@@ -201,7 +200,7 @@ float readWindSpeed(void){
     accAngle =  accAngle / samples;
     
     //Calculate distance traveled (mph)
-    calcSpeed = pow(((double)accAngle / 4095.00) / 2.4, 0.3) * 2.23694;
+    calcSpeed = pow((accAngle / 4095.00) / 0.1, 0.6) * 2.23694;
     calcResult = millis();
     accAngle=0;
 

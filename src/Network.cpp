@@ -542,14 +542,14 @@ bool wUndergroundPWS(void){
         if(!test_board) httpCode = http.GET();
         if(test_board) httpCode = 200;
         if(httpCode > 0) {
-            if(httpCode == HTTP_CODE_OK) {
-        } else {
-            //Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-            if(!test_board) http.end();
-            return false;
-        }
-        http.end();
-        return true;
+              if(httpCode == HTTP_CODE_OK) {
+                      http.end();
+                      return true;
+          } else {
+              //Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+              if(!test_board) http.end();
+              return false;
+          }
         }
 }
 
