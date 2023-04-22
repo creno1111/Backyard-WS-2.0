@@ -66,6 +66,7 @@ All code is Arduino compatible. PlatformIO is my platform of choice. Lots of thi
  * WebSockets @ 2.3.7 (required: links2004/WebSockets @ ^2.3.6)
  * ezTime @ 0.8.3 (required: ropg/ezTime @ ^0.8.3)
  * https://canvasjs.com/ (chart Javascript) for the local weather data charting
+ * Chiper.cpp Created on: Feb 28, 2019 Author: joseph
 
 But if you use PlatformIO, I believe platform will help you get the libraries loaded. One library not listed that I had to manually add, the battery state monitor: BatteryRead, Copyright (c) 2019 Pangodream (MIT license).
 
@@ -81,7 +82,6 @@ After up and running, delete the settings.txt file if one exists using the Updat
 
 (Built in FS utility to manage firmware, partition, files)
 
-Or you can always clone this to your system and build it yourself.
 
 
 Note: First time sharing on GitHub, hope someone finds value from this project... more to come
