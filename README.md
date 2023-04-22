@@ -82,7 +82,6 @@ After up and running, delete the settings.txt file if one exists using the Updat
 
 (Built in FS utility to manage firmware, partition, files)
 
-Or you can always clone this to your system and build it yourself.
 
 
 Note: First time sharing on GitHub, hope someone finds value from this project... more to come
