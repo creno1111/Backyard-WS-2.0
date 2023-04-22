@@ -11,15 +11,21 @@ Hardware enclosure:
 Hardware Sensing capabilities:
  - Temperature
  - Humidity
+ - Dew Point
  - Barometric pressure
  - Wind direction
  - Wind speed
+ - Wind Gust
 
 Data charting:
 
  - 1 hour charts of Temperature, Humidity, Barometric pressure and Wind speed.
  - 24 hour chars of Temperature, Humidity, Barometric pressure and Wind speed. 
  - 15 minute snapshots saved to internal FS, Space for a years worth of data.
+ 
+ Weather Underground PWS:
+  - Uploading of data to wunderground.com weather map as PWS Data (type other)
+  - Update interval, ID and Key settable through settings page
 
 NWS (Nation weather service) of current location. Zip code lookup for location change.
 
@@ -67,7 +73,9 @@ But if you use PlatformIO, I believe platform will help you get the libraries lo
 
 Current firmware releases is available for manual firmware uploads. Firmware releases can be programmed to the ESP32 using software, OTA or WSv2 uploader web page if uploading from previous firmware. 
 
-Once Configuration portal is completed and WSv2 is running on the network, upload the files from the /src/data directory. Use the uploader webpage to upload the files, then select back or reboot. WSv2 should now be running as a Weather station.   
+Once Configuration portal is completed and WSv2 is running on the network, upload the files from the /src/data directory. Use the uploader webpage to upload the files, then select back or reboot. WSv2 should now be running as a Weather station.  
+
+After up and running, delete the settings.txt file if one exists using the Update page. Then go to the Settings page and save the information. This will create a new settings page from scratch, but more importantly it will generate a new Cipher key and save it in the EEPROM. Cipher keys are used to encrypt Keys/Passwords. Just repeat the delete of settings.txt if you ever want to regenerate another random key.
 
 ![alt text](https://github.com/creno1111/Backyard-WS-2.0/blob/master/img/WSv2%20FS%20utility.PNG?raw=true)
 
