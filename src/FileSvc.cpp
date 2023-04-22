@@ -3,7 +3,9 @@
 #include "Network.h"
 #include "WebSvc.h"
 #include "timekeeper.h"
+#include "eeprom.h"
 
+#include "cipher.h"
 
 extern FS* filesystem;
 File file;
@@ -172,10 +174,43 @@ void fileCleanupSettings(void){ fileSetting.flush();  fileSetting.close(); }
 //check for settings file, TODO: should be integrated to the other file checks, integrate later
 bool fileExistsSettings(void){    if(!FileFS.exists(settingsFile)){ return false;  } return true;   }
 
+//cipher helpers, create key, retrieve key from eeprom, read and write ciphered data
+void cipherKeyNew(void){
+    Serial.printf("************** Creating new cyrpto key ************************");
+    EEPROM.begin(512);
+    String key = "";
+    randomSeed(analogRead(33)); // initialize random seed
+    for (int i = 0; i < 16; i++) {
+      key += (char)(random(65, 122)); // add a random character to the string
+    }
+    Serial.printf("\nNew key: %s\n", key.c_str());
+    EEPROM.writeBytes(0, key.c_str(), 17);
+    EEPROM.commit();
+}
+
+char * cipherKeyRead(void){ char *key = new char[17];
+  EEPROM.begin(512);
+  EEPROM.readBytes(0, key, 16);
+  key[16] = '\0';
+  return key;
+}
+
+String readCipher(String hidden){
+  Cipher *cipher = new Cipher();
+  cipher->setKey(cipherKeyRead());
+  return cipher->decryptString(hidden);
+}
+
+String writeCipher(String hide){
+  Cipher *cipher = new Cipher();
+  cipher->setKey(cipherKeyRead());
+  return cipher->encryptString(hide);
+}
+
 //read settings file, return settings struct
 settingsWS readSettings(void){
   if(!fileExistsSettings()) { 
-    // Serial.printf("FS: Creating new settings.txt file\n");
+    cipherKeyNew();
     fileSetting = FileFS.open(settingsFile, "w"); 
     fileCleanupSettings();
   }
@@ -196,6 +231,10 @@ settingsWS readSettings(void){
       else if(token == "HumOffset"){   settings_WS.HumidityOffset = result.toFloat();  }
       else if(token == "BarOffset"){   settings_WS.BaroOffset = result.toFloat();  }
       else if(token == "WindOffset"){   settings_WS.WindOffset = result.toFloat();  }
+      else if(token == "WUUPD"){   settings_WS.WUUPD = result.toInt(); }
+      else if(token == "WUID"){   settings_WS.WUID = result; }
+      else if(token == "WUPW"){   settings_WS.WUPW = readCipher(result); }
+      else if(token == "BatDisp"){   settings_WS.BatDisp = result.toInt(); }
     }
   }
   fileCleanupSettings();
@@ -205,23 +244,30 @@ settingsWS readSettings(void){
 //write setting to settings file
 void writeSettings(void){
   if(!fileExistsSettings()) { 
-    Serial.printf("FS: Creating new settings.txt file\n");
     fileSetting = FileFS.open(settingsFile, "w"); 
+    cipherKeyNew();
     fileCleanupSettings();
   }
   fileSetting = FileFS.open(settingsFile, "w"); // Open the settings file for writing
   if (fileSetting) {
-    fileSetting.printf("# lat, lon & zip are updated after NWS zip lookup (webpage)\n\n");
-    fileSetting.printf("# Other settings are set from the settings page\n\n");
+    fileSetting.printf("# lat, lon & zip are updated after NWS zip lookup (webpage)\n");
     fileSetting.printf("lat:%f\n", settings_WS.lat); // Write the latitude value
     fileSetting.printf("lon:%f\n", settings_WS.lon); // Write the longitude value
     fileSetting.printf("zip:%i\n", settings_WS.zip); // Write the zip code value
+    fileSetting.printf("\n# Other settings are set from the settings page\n");
     fileSetting.printf("DST:%i\n", settings_WS.DST);
     fileSetting.printf("WindDir:%i\n", settings_WS.WindDir);
     fileSetting.printf("TmpOffset:%f\n", settings_WS.TempOffset); 
     fileSetting.printf("HumOffset:%f\n", settings_WS.HumidityOffset);
     fileSetting.printf("BarOffset:%f\n", settings_WS.BaroOffset); 
     fileSetting.printf("WindOffset:%f\n", settings_WS.WindOffset); 
+    fileSetting.printf("WUUPD:%i\n", settings_WS.WUUPD); 
+    fileSetting.printf("WUID:%s\n", settings_WS.WUID); 
+    fileSetting.printf("WUPW:%s\n", writeCipher(settings_WS.WUPW).c_str());
+    fileSetting.printf("BatDisp:%i\n", settings_WS.BatDisp);
+    fileSetting.printf("\n# To obtain a new cipher key, delete the settings file.\n");
+    fileSetting.printf("# On save of settings page the cipher key will be randomly regenerated and saved to the EEPROM.\n");
+    fileSetting.printf("# On save of settings page a new settings file will be written.\n");
     fileSetting.printf("\n# End of file");
     fileCleanupSettings();
   }

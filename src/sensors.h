@@ -16,5 +16,6 @@ float readPressure(void);
 float readWindSpeed(void);
 String readWindDirection(void);
 float readHeatIndex(void);
+float readDewPoint(void);
 
 #endif //SENSOR_H

@@ -3,6 +3,8 @@
 #include "input.h"
 #include "WebSvc.h"
 #include "HTTPClient.h"
+#include "sensors.h"
+#include "fileSvc.h"
 // Use from 0 to 4. Higher number, more debugging messages and memory usage.
 #define _WIFIMGR_LOGLEVEL_    0
 
@@ -15,7 +17,11 @@
 #include "HttpClient.h"
 WiFiMulti wifiMulti;
 
+extern float WindDir;
+extern float WindGust;
 extern FS* filesystem;
+extern bool test_board;
+extern struct settingsWS settings_WS;
 
 #define ESP_getChipId()   ((uint32_t)ESP.getEfuseMac())
 #define LED_ON      HIGH
@@ -442,11 +448,9 @@ void wifiSetup(void){
   {
     Serial.print("connected. Local IP: ");
     Serial.println(WiFi.localIP());
-    // networkConnectShow(WIFI_GOOD);
-    //delay(1000);
 
     //enable modem light sleep mode for battery savings, disable if hooked to line voltage.
-    WiFi.setSleep(true);
+    //WiFi.setSleep(true);
     //HTTPClient http;
   }
   else{
@@ -503,9 +507,8 @@ bool getLatLon(long zip, double &lat, double &lon){
         Serial.print("[HTTP] GET Lat / Lon\n");
         int httpCode = http.GET();
         if(httpCode > 0) {
-          // Serial.printf("code: %d\n",httpCode);
+          Serial.printf("code: %d\n",httpCode);
             if(httpCode == HTTP_CODE_OK) {
-                //String payload = 
                 sprintf(nwsURL,"%s",strstr(http.getString().c_str(),"List>"));
                 Serial.printf("%s\n",nwsURL);
                 String workTmp(nwsURL);
@@ -526,6 +529,30 @@ bool getLatLon(long zip, double &lat, double &lon){
         http.end();
         return true;
 }
+
+bool wUndergroundPWS(void){
+        HTTPClient http;
+        //Serial.print("[HTTP] begin...\n");
+        char wuPWS[512];
+        sprintf(wuPWS,"%s%s%s%s%s%i%s%f%s%f%s%f%s%i%s%f%s%f%s","https://weatherstation.wunderground.com/weatherstation/updateweatherstation.php?ID=",settings_WS.WUID,"&PASSWORD=",settings_WS.WUPW,"&dateutc=now&winddir=",int(WindDir),"&windspeedmph=",readWindSpeed(),"&tempf=",readTemp(),"&baromin=",readPressure(),"&humidity=",int(readHumidity()),"&dewptf=", readDewPoint(),"&windgustmph=", WindGust, "&action=updateraw");
+        if(!test_board) http.begin(wuPWS);
+        Serial.printf("%s\n",wuPWS); 
+        //Serial.print("[HTTP] GET: PWS sent\n"); 
+        int httpCode;
+        if(!test_board) httpCode = http.GET();
+        if(test_board) httpCode = 200;
+        if(httpCode > 0) {
+            if(httpCode == HTTP_CODE_OK) {
+        } else {
+            //Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+            if(!test_board) http.end();
+            return false;
+        }
+        http.end();
+        return true;
+        }
+}
+
 
 
 

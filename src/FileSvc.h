@@ -11,6 +11,10 @@ struct settingsWS {
   double TempOffset;
   double BaroOffset;
   double HumidityOffset;
+  int WUUPD;
+  String WUID;
+  String WUPW;
+  int BatDisp;
 };
 
 void saveHourlyData(void);

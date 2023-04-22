@@ -96,6 +96,10 @@
         var TempOffset = 0.0;
         var HumOffset = 0.0;
         var BaroOffset = 0.0;
+        var BatteryDisplay = 0;
+        var WUndergroundID = "";
+        var WUndergroundKey = "";
+        var WUndergroundInterval = 10;
         var url = "ws://" + window.location.host + ":1883/";
 
         // This is called when the page finishes loading
@@ -107,6 +111,10 @@
         document.getElementById("TemperatureOffset").value = TempOffset;
         document.getElementById("HumidityOffset").value = HumOffset;
         document.getElementById("BarometricOffset").value = BaroOffset;
+        document.getElementById("WUndergroundInterval").value = WUndergroundInterval;
+        document.getElementById("WUndergroundID").value = WUndergroundID;
+        document.getElementById("WUndergroundInterval").value = WUndergroundInterval;
+        document.getElementById("BatteryDisplay").value = BatteryDisplay;
 
         document.getElementById("windDirectionOffset").addEventListener("input", function() {
             WindDirOffset = document.getElementById("windDirectionOffset").value
@@ -123,6 +131,18 @@
         document.getElementById("BarometricOffset").addEventListener("input", function() {
             BaroOffset = document.getElementById("BarometricOffset").value
         });
+        document.getElementById("WUndergroundInterval").addEventListener("input", function() {
+            WUndergroundInterval = document.getElementById("WUndergroundInterval").value
+        });
+        document.getElementById("WUndergroundID").addEventListener("input", function() {
+            WUndergroundID = document.getElementById("WUndergroundID").value
+        });
+        document.getElementById("WUndergroundKey").addEventListener("input", function() {
+            WUndergroundKey = document.getElementById("WUndergroundKey").value
+        });
+        document.getElementById("BatteryDisplay").addEventListener("input", function() {
+            BatteryDisplay = document.getElementById("BatteryDisplay").value
+        });        
         wsConnect(url);
     }
 
@@ -185,6 +205,22 @@
                     BaroOffset = parseFloat(dataPacket);
                     document.getElementById("BarometricOffset").value = BaroOffset;
                 break;   
+            case "WU:":
+                WUndergroundInterval = parseFloat(dataPacket);
+                document.getElementById("WUndergroundInterval").value = WUndergroundInterval;
+                break;
+            case "WI:":	
+            WUndergroundID = dataPacket;
+                document.getElementById("WUndergroundID").value = WUndergroundID;
+                break;   
+            case "WK:":	
+            WUndergroundKey = dataPacket;
+                    document.getElementById("WUndergroundKey").value = WUndergroundKey;
+                break; 
+            case "BD:":   
+                BatteryDisplay = dataPacket;
+                    document.getElementById("BatteryDisplay").value = BatteryDisplay;
+                break;                               
             default:
                 break;
         }
@@ -195,7 +231,7 @@
 
     //save settings
     function save() { 
-        doSend("SettingsWrite:" + DaylightST + ":" + WindDirOffset + ":" + WindOffset + ":" + TempOffset + ":" + HumOffset + ":" + BaroOffset); 
+        doSend("SettingsWrite:" + DaylightST + ":" + WindDirOffset + ":" + WindOffset + ":" + TempOffset + ":" + HumOffset + ":" + BaroOffset + ":" + WUndergroundInterval + ":" + WUndergroundID + ":" + WUndergroundKey + ":" + BatteryDisplay); 
     }    
 
     //Websock data send
@@ -219,37 +255,58 @@ window.addEventListener("load", init, false);
         <div id="divMain">
         <table>
         <tr><td>
+            <p style="color:#a4a4a4">Time</p>
             <!-- DST CHECKBOX -->
             <button type="button" onclick="DSTupd()" class="button" id="daylight-savings-time-btn">Daylight Savings Time 
             <input type="checkbox" id="DST" onclick="DSTupd()" ></button> 
         </td></tr>
         <tr><td> <hr color="#501010" size="1">
+            <p style="color:#a4a4a4">Sensors</p>
             <!-- Wind speed offset -->
             Wind direction Offset (degrees)<input type="number" id="windDirectionOffset"  class="button" step="1">
         </td></tr>
-        <tr><td> <hr color="#501010" size="1">
+        <tr><td> 
             <!-- Wind speed offset -->
             Wind speed Offset (mph)<input type="number" id="windSpeedOffset"  class="button" step="0.1">
         </td></tr>                
-        <tr><td> <hr color="#501010" size="1">
+        <tr><td> 
             <!-- Temp Offset -->
             Temperature Offset (f)<input type="number" id="TemperatureOffset"  class="button" step="0.1"> 
         </td></tr>
-        <tr><td> <hr color="#501010" size="1">
+        <tr><td> 
             <!-- Humidity Offset -->
             Humidity Offset<input type="number" id="HumidityOffset"  class="button" step="0.1"> 
         </td></tr>  
-        <tr><td> <hr color="#501010" size="1">
+        <tr><td> 
             <!-- Barometric Offset -->
             Barometric Pressure Offset<input type="number" id="BarometricOffset"  class="button" step="0.1"> 
-        </td></tr>    
+        </td></tr>
+        <tr><td> <hr color="#501010" size="1">
+            <p style="color:#a4a4a4">Weather Underground PWS</p>            
+            <!-- WUUPD -->
+            Upd Interval (seconds)<input type="number" id="WUndergroundInterval"  class="button" step="1">
+        </td></tr>
+        <tr><td>      
+            <!-- WUID -->
+            Weather Underground ID<input type="text" id="WUndergroundID"  class="button">
+        </td></tr>
+        <tr><td>
+            <!-- WUKey -->
+            Weather Underground Key<input type="text" id="WUndergroundKey"  class="button">
+            <p style="color:#f00; font-size: smaller;">Key will be encrypted.</p>
+        </td></tr>       
+        </td></tr>
+        <tr><td> <hr color="#501010" size="1">
+            <p style="color:#a4a4a4">Misc</p>            
+            <!-- WUUPD -->
+            Battery Display (0 or 1)<input type="number" id="BatteryDisplay"  class="button" step="1">
+        </td></tr>
         </table>
         <hr color="#501010" size="1">
         <!-- reload button -->
         <p><button type="button" onclick="reload()" id="reloadBtn" class="btn2">Reload current settings</button></p>
         <!-- save button -->
-        <p><button type="button" onclick="save()" id="savetBtn" class="btn2">Save current settings</button></p>
-        
+        <p><button type="button" onclick="save();reload()" id="savetBtn" class="btn2">Save current settings</button></p>
         </div>
 </body>
 </head>

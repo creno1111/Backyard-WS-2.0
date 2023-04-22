@@ -7,6 +7,7 @@
 #include <Wire.h>
 #include <filesvc.h>
 #include "as5600.h"
+#include "math.h"
 
 //NOTE: if missing BME sensor, sensor auto detect will force test mode.
 //      Temp, Humidity, and Barometric pressure are simulated.
@@ -14,6 +15,9 @@
 //Test mode is used for testing out the webserver and other functions without sensors.
 
 AMS_5600 ams5600;
+
+float WindDir; // Wind direction in degrees, 0-360, 0 = North, 90 = East, 180 = South, 270 = West
+float WindGust; // Wind gust in mph
 
 bool test_board = false;
 
@@ -23,7 +27,7 @@ extern struct settingsWS settings_WS;
 int SamplingRate = 50;                //interrupts per second
 int IRAM_ATTR endAngle=0;             //measured angle since last read
 static IRAM_ATTR int accAngle = 0;    //total accumulated angle
-static int calcResult = 0;            
+static long calcResult = 0;            
 static IRAM_ATTR int startAngle =0;   //measured angle from prior read
 hw_timer_t * timer = NULL;            //create timer instance to attach to interrupt
 //windspeed interrupt
@@ -121,8 +125,7 @@ String readWindDirection(void){
     static float angleRead[100];
     static int count =0 ;
     if(count==buffers) count = 0;
-    if(test_board)    angleRead[count] =  angleRead[count] = 0;
-    else angleRead[count] = convertRawAngleToDegrees(ams5600.getRawAngle());
+    else angleRead[count] = test_board ? random(0,360) : convertRawAngleToDegrees(ams5600.getRawAngle());
     if(angleRead[count] > 360) angleRead[count] = angleRead[count] - 360;
     if(angleRead[count] < 0) angleRead[count] = 360 + angleRead[count];
     float readtmp = angleRead[count];
@@ -132,9 +135,10 @@ String readWindDirection(void){
     int a=0;while(a<buffers){heading += angleRead[a];a++;}
     heading = heading / buffers;
     headingLR = heading;
-    headingTmp = heading + (float)settings_WS.WindDir;
+    headingTmp = heading + (float)settings_WS.WindDir < 0 ? 0 : heading + (float)settings_WS.WindDir;
     if(headingTmp > 360.0) headingTmp = headingTmp - 360;
     else if(headingTmp < 0.0) headingTmp = 360 + headingTmp;
+    WindDir = headingTmp;
   }
   //return finalAngle;
   char indicator[5];
@@ -169,20 +173,24 @@ String readWindDirection(void){
   return indicator;
 }
 
+
 //return windspeed reading in MPH
 float readWindSpeed(void){
   static float historySpeed=0;
   static float calcSpeed = 0;
+  static long startTime=millis();
 
   // service mph calculations every 1 second
   if(millis() > calcResult + 1000){
+    float offsetTime = (millis() - calcResult)/1000; //calculate time from last reading
+    if((float)accAngle < offsetTime*900) accAngle = 0; //remove analog noise on no wind conditions
 
-    //windspeed angle buffer (5x oversampling)
+    // //windspeed angle buffer (5x oversampling) 
     static int aAbuffCnt = 0;
     int samples = 5;
     static int accAngleBuff[5]; 
-    if(aAbuffCnt == samples) aAbuffCnt =0;
-    accAngleBuff[aAbuffCnt] = accAngle;
+    if(aAbuffCnt == samples) aAbuffCnt = 0;
+    accAngleBuff[aAbuffCnt] = (float)accAngle / offsetTime;
     accAngle =0;
     aAbuffCnt++;
     int aabuf = 0;
@@ -191,17 +199,41 @@ float readWindSpeed(void){
       aabuf++;
     }
     accAngle =  accAngle / samples;
-    //Calculate distance traveled
-    static long startTime=millis();
-    float radiusA = 5.00;       // ** radius in inches of ananometer 
-    calcSpeed =  ((radiusA * 3.14) * (((calcResult - startTime)/1000)*60)) * ((float)accAngle / 4095.00);
-    startTime = calcResult;
-    //convert distance inches per min = mph
+    
+    //Calculate distance traveled (mph)
+    calcSpeed = pow(((double)accAngle / 4095.00) / 2.4, 0.3) * 2.23694;
     calcResult = millis();
-    calcSpeed *=60.00;
-    calcSpeed =calcSpeed / 5280.00;
-    accAngle = 0;
+    accAngle=0;
 
+    //don't allow the first few readings to be used for wind gust
+    static bool firstRun = true;
+    if(firstRun){
+      static int ignoreGusts = 0;
+      ignoreGusts++;
+      if(ignoreGusts = 5) firstRun = false;
+      calcSpeed = 0;
+    }  
+
+    // Calculate the wind gust, get top speed over 5 minutes
+    float windSpeed = calcSpeed; // The current wind speed
+    static float maxWindGust = 0; // The maximum wind gust
+    static float SecondHighestWindGust = 0; // The second highest wind gust
+    static long maxHold=0;
+    if (windSpeed > maxWindGust)
+    {
+      maxHold = millis();  
+      maxWindGust = windSpeed;
+      SecondHighestWindGust = 0;
+    }
+    if(millis() > maxHold + 150000){
+      if (windSpeed > SecondHighestWindGust)     SecondHighestWindGust = windSpeed;
+    }
+    if(millis() > maxHold + 300000){
+      maxWindGust = SecondHighestWindGust;    maxHold = millis();
+      SecondHighestWindGust = 0;
+    }
+    WindGust = maxWindGust;
+    
     // running average of windspeed, with a smooting window
     int WINDOW_SIZE = 25; //must be lower than Samples
     int Samples = 60;
@@ -228,7 +260,7 @@ float readWindSpeed(void){
     }
   }
   if(calcSpeed < 0.99) calcSpeed = 0.00;
-  return calcSpeed + settings_WS.WindOffset;
+  return calcSpeed + settings_WS.WindOffset < 0 ? 0 : calcSpeed + settings_WS.WindOffset;
 }
 
 //return temp readings averaged out over 30 readings. ???.?? f
@@ -243,7 +275,7 @@ float readTemp(void){
         for(int a=0; a<readings;a++){ readSensor += tempReadings[a] * 100;  }
         SensorReading = ((float)(readSensor / readings)/100);
     } else if(ticker % 2 == 1){ readTrigger=true; }
-     if(SensorReading < 200) return SensorReading + settings_WS.TempOffset;
+     if(SensorReading < 200) return SensorReading + settings_WS.TempOffset < 0 ? 0 : SensorReading + settings_WS.TempOffset;
      else return 200; 
 }
 
@@ -259,7 +291,7 @@ int readHumidity(void){
         for(int a=0; a<readings;a++){ readSensor += humidityReadings[a]; }
         SensorReading = readSensor / readings;
     } else if(ticker % 2 == 1){ readTrigger=true; }
-    if(SensorReading < 200 && SensorReading > 0) return SensorReading + settings_WS.HumidityOffset;
+    if(SensorReading < 200 && SensorReading > 0) return SensorReading + settings_WS.HumidityOffset < 0 ? 0 : SensorReading + settings_WS.HumidityOffset;
     else return 200; 
 }
 
@@ -276,7 +308,7 @@ float readPressure(void){
         for(int a=0; a<readings;a++){ readSensor += presReadings[a] * 100;  }
         SensorReading = (float)(readSensor / readings)/100;
     } else if(ticker % 2 == 1){ readTrigger=true; }
-     if(SensorReading < 200) return SensorReading + settings_WS.BaroOffset;
+     if(SensorReading < 200) return SensorReading + settings_WS.BaroOffset < 0 ? 0 : SensorReading + settings_WS.BaroOffset;
      else return 200; 
 }
 
@@ -284,3 +316,6 @@ float readHeatIndex(void){
   return EnvironmentCalculations::HeatIndex(readTemp(), readHumidity(), envTempUnit);
 }
 
+float readDewPoint(void){
+  return EnvironmentCalculations::DewPoint(readTemp(), readHumidity(), envTempUnit);
+}

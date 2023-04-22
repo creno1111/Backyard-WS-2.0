@@ -479,17 +479,12 @@ void webSocketEvent(uint8_t num, WStype_t type_ws, uint8_t * payload, size_t len
           sprintf(msg_buf,"Gt:%i",graph);
          // Serial.println(msg_buf);          
           dataSeperate(false);
-          //readHeatIndex()
-         //send lat and lon for NWS data
-          //double lat;          double lon;
-         // if(zipRequest){
-            zipRequest=false;
-            //openSettings(lat,lon);
-            // settingsWS settings = readSettings();
-            /*settingsWS*/ readSettings();
-            sprintf(msg_buf,"Ll:%.04f,%.04f",readSettings().lat,readSettings().lon);
-            dataSeperate(false);
-         // }
+          zipRequest=false;
+          readSettings();
+          sprintf(msg_buf,"Ll:%.04f,%.04f",readSettings().lat,readSettings().lon);
+          dataSeperate(false);
+          sprintf(msg_buf,"BD:%i",settings_WS.BatDisp);
+          dataSeperate(false);
           
 
           //SEND 60M GRAPH DATAPOINTS
@@ -577,7 +572,15 @@ void webSocketEvent(uint8_t num, WStype_t type_ws, uint8_t * payload, size_t len
           webSocket.sendTXT(num,msg_buf);
           sprintf(msg_buf,"HO:%f", settings_WS.HumidityOffset);
           webSocket.sendTXT(num,msg_buf);
-          // Serial.printf("Settings Read, %f, %f, %d\n",settings_WS.WindOffset, settings_WS.TempOffset, settings_WS.BaroOffset);
+          sprintf(msg_buf,"WU:%i", settings_WS.WUUPD);
+          webSocket.sendTXT(num,msg_buf);          
+          sprintf(msg_buf,"WI:%s", settings_WS.WUID);
+          webSocket.sendTXT(num,msg_buf);
+          sprintf(msg_buf,"WK:%s", "********");
+          webSocket.sendTXT(num,msg_buf);          
+          sprintf(msg_buf,"BD:%i", settings_WS.BatDisp);
+          webSocket.sendTXT(num,msg_buf);          
+
         //receive request for settings write
         } else if( strncmp((char *)payload, "SettingsWrite", 13) == 0 ){
           char * pch;
@@ -595,6 +598,15 @@ void webSocketEvent(uint8_t num, WStype_t type_ws, uint8_t * payload, size_t len
           settings_WS.HumidityOffset = atof(pch);
           pch = strtok (NULL, ":");
           settings_WS.BaroOffset = atof(pch);
+          pch = strtok (NULL, ":");
+          settings_WS.WUUPD = atoi(pch);
+          pch = strtok (NULL, ":");
+          settings_WS.WUID = pch;
+          pch = strtok (NULL, ":");
+          if( strcmp((char *)pch, "********") != 0 ) settings_WS.WUPW = pch;
+          pch = strtok (NULL, ":");
+          settings_WS.BatDisp = atoi(pch);
+          //Serial.printf("Settings Write, %i, %s, %s\n", settings_WS.WUUPD, settings_WS.WUID, settings_WS.WUPW);          
           writeSettings();
         // reset system
         } else if(  ( strcmp((char *)payload, "resetWS") == 0 ) ){

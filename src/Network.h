@@ -23,5 +23,6 @@ byte displayIP(void);
 String FSData(void);
 int getStrength(int points);
 bool getLatLon(long zip, double &lat, double &lon);
+bool wUndergroundPWS(void);
 
 #endif //Network_h

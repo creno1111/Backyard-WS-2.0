@@ -127,6 +127,12 @@ void loop() {
     } 
   sensorsSvc();
 
+    static long PWS = millis();
+    if(millis() > PWS + (settings_WS.WUUPD * 1000)){
+      PWS = millis();
+      wUndergroundPWS();
+    } 
+
   //read to service the sensor buffers
   readWindDirection();
   readWindSpeed();

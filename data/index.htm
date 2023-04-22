@@ -831,9 +831,13 @@ function onMessage(evt) {
 						//Set time on page
 						tdread.innerHTML = dataPacket;
 					break;		
-				case "Gt:":
+					case "Gt:":
 						if(dataPacket == 60) { graphSixtyMinSet(); }
 						if(dataPacket == 24) { graphTwentyFourSet(); }
+					break;
+				case "BD:":
+						if(dataPacket == 0) { document.getElementById("bread").setAttribute("hidden", "hidden");  }
+						if(dataPacket == 1) {  document.getElementById("bread").setAttribute("hidden");}
 					break;
 				case "Ll:":
 						
