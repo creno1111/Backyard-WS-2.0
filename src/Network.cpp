@@ -17,6 +17,8 @@
 #include "HttpClient.h"
 WiFiMulti wifiMulti;
 
+
+
 extern float WindDir;
 extern float WindGust;
 extern FS* filesystem;
@@ -272,6 +274,7 @@ uint8_t connectMultiWiFi(void)
 #endif
 
   int i = 0;
+  esp_wifi_set_ps(WIFI_PS_NONE);
   status = wifiMulti.run();
   delay(WIFI_MULTI_1ST_CONNECT_WAITING_MS);
 

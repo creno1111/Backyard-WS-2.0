@@ -200,7 +200,7 @@ float readWindSpeed(void){
     accAngle =  accAngle / samples;
     
     //Calculate distance traveled (mph)
-    calcSpeed = pow((accAngle / 4095.00) / 0.1, 0.6) * 2.23694;
+    calcSpeed = pow((accAngle / 4095.00) / 0.1, 0.55) * 2.23694;
     calcResult = millis();
     accAngle=0;
 
@@ -224,10 +224,10 @@ float readWindSpeed(void){
       maxWindGust = windSpeed;
       SecondHighestWindGust = 0;
     }
-    if(millis() > maxHold + 150000){
+    if(millis() > maxHold + (2700 * 1000)){
       if (windSpeed > SecondHighestWindGust)     SecondHighestWindGust = windSpeed;
     }
-    if(millis() > maxHold + 300000){
+    if(millis() > maxHold + (3600 * 1000)){
       maxWindGust = SecondHighestWindGust;    maxHold = millis();
       SecondHighestWindGust = 0;
     }

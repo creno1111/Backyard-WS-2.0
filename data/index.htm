@@ -319,7 +319,7 @@ var url = "ws://" + window.location.host + ":1883/";
 var pingPong = false; var wsDied=0; var divInputTitle; var divOptionText;
 var activity = 0;
 var bread = 0; var tdread;
-var getTemp; var getHumidity; var getPressure; var getInxed; var getWindSpeed; var wdirection; var wdirTxt;
+var getTemp; var getHumidity; var getPressure; var getInxed; var getWindSpeed; var wdirection; var wdirTx; var getWG; var getDP;
 var lastPacket = 0; var lastPacketWSmajor = 0; var lastPacketWSminor = 0;
 var reconnectWS = 0;
 var xVal = 0;
@@ -378,6 +378,8 @@ function init() {
 	getPressure = document.getElementById("getPressure");
 	getIndex = document.getElementById("getIndex");
 	getWindSpeed = document.getElementById("getWindSpeed");
+	getWG = document.getElementById("getWG");
+	getDP = document.getElementById("getDP");
 	divInputTitle = document.getElementById("InputTitle");
 	divOptionText = document.getElementById("OptionText"); 
 	divVariables = document.getElementById("divVariables");
@@ -396,6 +398,7 @@ function init() {
 	document.getElementById("NwsForecast").setAttribute("hidden", "hidden");
 	document.getElementById("NwsHourly").setAttribute("hidden", "hidden");
 	document.getElementById("NwsAlert").setAttribute("hidden", "hidden");
+	document.getElementById("bread").setAttribute("hidden", "hidden");
     // Connect to WebSocket server
 	//getLocation();
     wsConnect(url);
@@ -695,6 +698,7 @@ function onClose(evt) {
 
 //Websocket message received
 function onMessage(evt) {
+	var winDisplay;
 	var currentGraph = 0;
 	//console.log(evt.data);
     var param = evt.data.substring(0,3);
@@ -793,6 +797,10 @@ function onMessage(evt) {
 						var partPackets = 	dataPacket.split("."); 
 						getTemp.innerHTML ="<span style='color:#6e6c68;font-size: 45px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;font-family: 'LED Real'>" + partPackets[0] + "</span><span style='color:#6e6c68;font-size: 25px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>&#176;f</span>";
 					break;
+				case "DP:":
+						getDP.innerHTML ="<span style='color:#6e6c68;font-size: 45px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;font-family: 'LED Real'>" + dataPacket + "</span><span style='color:#6e6c68;font-size: 25px'>&#176;f</span>";
+					break;
+
 				case "Mh:":
 						getHumidity.innerHTML ="<span style='color:#6e6c68;font-size: 45px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>" + dataPacket + "</span><span style='color:#6e6c68;font-size: 25px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>%</span>";
 					break;
@@ -801,19 +809,15 @@ function onMessage(evt) {
 						getPressure.innerHTML ="<span style='color:#6e6c68;font-size: 45px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>" + partPackets[0] + "</span><span style='color:#6e6c68;font-size: 25px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>." + partPackets[1] + "\"</span>";
 					break;	
 				case "Mw:":
-						if(dataPacket == 200) dataPacket = "0.00";
-						var partPackets = 	dataPacket.split(".");
-						getWindSpeed.innerHTML ="<span style='color:#6e6c68;font-size: 45px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>" + partPackets[0] + "</span><span style='color:#6e6c68;font-size: 25px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>mph</span>";
-							//+ "</span><span style='color:#6e6c68;font-size: 25px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>." + partPackets[1] + "mph</span>";
-						//if(partPackets[0] != lastPacketWSmajor) getWindSpeed.classList.add('fadingOut');
-						//lastPacketWSmajor = partPackets[0];						
-					break;				
+						winDisplay = "<span style='color:#6e6c68;font-size: 45px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>" + parseInt(dataPacket) + "</span>";
+					break;	
+				case "WG:":
+						getWindSpeed.innerHTML = winDisplay + "<span style='color:#6e6c68;font-size: 25px;'> / " + dataPacket + " mph</span>";
+					break;
 				case "Mi:":
-						var partPackets = 	dataPacket.split("."); 
-						getIndex.innerHTML ="<span style='color:#6e6c68;font-size: 45px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>" + partPackets[0] + "</span><span style='color:#6e6c68;font-size: 25px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'>&#176;f</span>";
+						getIndex.innerHTML ="<span style='color:#6e6c68;font-size: 25px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;'> " + parseInt(dataPacket) + "&#176;f</span>";
 					break;	
 				case "Mb:":
-						//console.log(dataPacket);
 						if(parseInt(dataPacket) > 74) 	imgPreload("bread","battery_full_small.png");
 						else if(parseInt(dataPacket) > 49 && parseInt(dataPacket) < 75) imgPreload("bread","battery_75_small.png");
 						else if(parseInt(dataPacket) > 24 && parseInt(dataPacket) < 50) imgPreload("bread","battery_50_small.png");
@@ -822,7 +826,6 @@ function onMessage(evt) {
 
 					break;	
 				case "Mr:":
-						//console.log(dataPacket);
 						if(parseInt(dataPacket) > 74 && parseInt(dataPacket) < 100) imgPreload("wread","wifi_low_small.png");
 						else if(parseInt(dataPacket) > 62 && parseInt(dataPacket) < 75) imgPreload("wread","wifi_13rd_small.png");
 						else if(parseInt(dataPacket) > 53 && parseInt(dataPacket) < 63) imgPreload("wread","wifi_23rd_small.png");
@@ -839,7 +842,6 @@ function onMessage(evt) {
 						lastPacket = partPackets[0];
 					break;			
 				case "TD:":
-						//check time minute, on 0 minutes - force reload of NWS data
 						var timeMonitor = dataPacket.split(":");
 						var timeMonitorMin = timeMonitor[1].split("pm");
 						console.log("part ", timeMonitorMin[0]);
@@ -859,7 +861,6 @@ function onMessage(evt) {
 						if(dataPacket == 1) {  document.getElementById("bread").setAttribute("hidden");}
 					break;
 				case "Ll:":
-						
 						var latLon = dataPacket.split(",");
 						lat = parseFloat(latLon[0]);
 						lon = parseFloat(latLon[1]);
@@ -897,7 +898,7 @@ if(pingPong) {wsDied=0; pingPong=false;}
   else {doSend("HeartBeat");
   wdirTxt.classList.remove('fadingOut');
   getWindSpeed.classList.remove('fadingOut');
- setTimeout(heartbeat, 5000);}
+ setTimeout(heartbeat, 10000);}
 }
 
 // Called from HTML
@@ -1132,11 +1133,11 @@ window.addEventListener("load", init, false);
 <div id="divMain">
 <table>
 <tr>
-	<td style="text-shadow: 0px 0px 3px rgb(0, 0, 0);">Temperature</td><td style="text-shadow: 0px 0px 3px black;">Wind Direction</td><td style="text-shadow: 0px 0px 3px black;">Humidity</td>
+	<td style="text-shadow: 0px 0px 3px rgb(0, 0, 0);">Temperature <br>Feels Like</td><td style="text-shadow: 0px 0px 3px black;">Wind Direction</td><td style="text-shadow: 0px 0px 3px black;">Humidity</td>
 	</tr>
 	
 <tr>
- <td><div id="getTemp" style="margin: 0 auto;"></div></td>
+ <td><div id="getTemp" ></div><div id="getIndex" ></div></td>
  <td style="padding: 10px" ><div class="compass" style="margin: 0 auto"><div  class="direction" ><p class = "fading" id="wdirTxt"  >NA</p></div>
 
 			<div id="wdir"></div></div></td>
@@ -1145,9 +1146,9 @@ window.addEventListener("load", init, false);
 
 </tr>
 <tr>
-	<td style="text-shadow: 0px 0px 3px black;">Heat Index</td><td style="text-shadow: 0px 0px 3px black;">Wind Speed </td><td style="text-shadow: 0px 0px 3px black;">Pressure</td>
+	<td style="text-shadow: 0px 0px 3px black;">Dew Point</td><td style="text-shadow: 0px 0px 3px black;">Wind Speed & Gust </td><td style="text-shadow: 0px 0px 3px black;">Pressure</td>
 </tr><tr>
-	<td><div id="getIndex" style="margin: 0 auto;"></td><td><div id="getWindSpeed"  style="margin: 0 auto;font-size: 5vw"></td><td><div id="getPressure" style="margin: 0 auto;"></div></td>
+	<td><div id="getDP" style="margin: 0 auto;"></div></td><td><div id="getWindSpeed" style="margin: 0 auto;"></div></td><td><div id="getPressure" style="margin: 0 auto;"></div></td>
 </tr>
 </table>
 <hr color="#501010" size="1">

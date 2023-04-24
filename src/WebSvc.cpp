@@ -23,6 +23,9 @@ extern float dayGraphBarometric[96];
 extern float dayGraphWindspeed[96];
 extern struct settingsWS settings_WS;
 
+extern float WindDir;
+extern float WindGust;
+
 static bool zipReturn = true;
 
 //extern int minute;
@@ -485,6 +488,10 @@ void webSocketEvent(uint8_t num, WStype_t type_ws, uint8_t * payload, size_t len
           dataSeperate(false);
           sprintf(msg_buf,"BD:%i",settings_WS.BatDisp);
           dataSeperate(false);
+          sprintf(msg_buf,"WG:%i",int(WindGust));
+          dataSeperate(false);
+          sprintf(msg_buf,"DP:%i",int(readDewPoint()));
+          dataSeperate(false);                    
           
 
           //SEND 60M GRAPH DATAPOINTS
