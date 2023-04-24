@@ -77,7 +77,7 @@ Current firmware releases is available for manual firmware uploads. Firmware rel
 Once Configuration portal is completed and WSv2 is running on the network, upload the files from the /src/data directory. Use the uploader webpage to upload the files, then select back or reboot. WSv2 should now be running as a Weather station.  
 
 After up and running, delete the settings.txt file if one exists using the Update page. Then go to the Settings page and save the information. This will create a new settings.txt from scratch, but more importantly it will generate a new Cipher key and save it in the EEPROM. Cipher keys are used to encrypt Keys/Passwords. Just repeat the delete of settings.txt if you ever want to regenerate another random Cipher key.
-Note: the Cipher key isn't super secure 16 bit AES, but it's better than having no encrption, and each device has it's own random private key.
+Note: the Cipher key isn't super secure at 16 bit AES, but it's better than having no encrption, and each device has it's own random private key.
 
 ![alt text](https://github.com/creno1111/Backyard-WS-2.0/blob/master/img/WSv2%20FS%20utility.PNG?raw=true)
 
