@@ -499,61 +499,63 @@ int getStrength(int points){
 //get lat and lon from zip code html reqeust. this is done because the NWS api does not support zip code requests
 //this is done in code vs HTML client to avoid CORS issues
 bool getLatLon(long zip, double &lat, double &lon){
-        HTTPClient http;
-        Serial.print("[HTTP] begin...\n");
-        char nwsURL[512];
-        char tmpZip[6];
-        sprintf(tmpZip,"%05d",zip);
-        sprintf(nwsURL,"%s%s","https://graphical.weather.gov/xml/sample_products/browser_interface/ndfdXMLclient.php?listZipCodeList=",tmpZip);
-        http.begin(nwsURL);
-        Serial.printf("%s",nwsURL);
-        Serial.print("[HTTP] GET Lat / Lon\n");
-        int httpCode = http.GET();
-        if(httpCode > 0) {
-          Serial.printf("code: %d\n",httpCode);
-            if(httpCode == HTTP_CODE_OK) {
-                sprintf(nwsURL,"%s",strstr(http.getString().c_str(),"List>"));
-                Serial.printf("%s\n",nwsURL);
-                String workTmp(nwsURL);
-                sprintf(nwsURL,"%s", workTmp.substring(workTmp.indexOf('>')+1,workTmp.indexOf(',')));
-                lat = atof(nwsURL);
-                sprintf(nwsURL,"%s", workTmp.substring(workTmp.indexOf(',')+1,workTmp.indexOf('<')));
-                lon = atof(nwsURL);
-                if(lat == 0 || lon == 0){
-                    Serial.printf("Error: Lat / Lon not found\n");
-                    return false;
-                }
-            }
-        } else {
-            Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-            return false;
-        }
+  HTTPClient http;
+  Serial.print("[HTTP] begin...\n");
+  char nwsURL[512];
+  char tmpZip[6];
+  sprintf(tmpZip,"%05d",zip);
+  sprintf(nwsURL,"%s%s","https://graphical.weather.gov/xml/sample_products/browser_interface/ndfdXMLclient.php?listZipCodeList=",tmpZip);
+  http.begin(nwsURL);
+  Serial.printf("%s",nwsURL);
+  Serial.print("[HTTP] GET Lat / Lon\n");
+  int httpCode = http.GET();
+  if(httpCode > 0) {
+    Serial.printf("code: %d\n",httpCode);
+      if(httpCode == HTTP_CODE_OK) {
+          sprintf(nwsURL,"%s",strstr(http.getString().c_str(),"List>"));
+          Serial.printf("%s\n",nwsURL);
+          String workTmp(nwsURL);
+          sprintf(nwsURL,"%s", workTmp.substring(workTmp.indexOf('>')+1,workTmp.indexOf(',')));
+          lat = atof(nwsURL);
+          sprintf(nwsURL,"%s", workTmp.substring(workTmp.indexOf(',')+1,workTmp.indexOf('<')));
+          lon = atof(nwsURL);
+          if(lat == 0 || lon == 0){
+              Serial.printf("Error: Lat / Lon not found\n");
+              http.end();
+              return false;
+          }
+      }
+  } else {
+      Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+      http.end();
+      return false;
+  }
 
-        http.end();
-        return true;
+  http.end();
+  return true;
 }
 
 bool wUndergroundPWS(void){
-        HTTPClient http;
-        //Serial.print("[HTTP] begin...\n");
-        char wuPWS[512];
-        sprintf(wuPWS,"%s%s%s%s%s%i%s%f%s%f%s%f%s%i%s%f%s%f%s","https://weatherstation.wunderground.com/weatherstation/updateweatherstation.php?ID=",settings_WS.WUID,"&PASSWORD=",settings_WS.WUPW,"&dateutc=now&winddir=",int(WindDir),"&windspeedmph=",readWindSpeed(),"&tempf=",readTemp(),"&baromin=",readPressure(),"&humidity=",int(readHumidity()),"&dewptf=", readDewPoint(),"&windgustmph=", WindGust, "&action=updateraw");
-        if(!test_board) http.begin(wuPWS);
-        Serial.printf("%s\n",wuPWS); 
-        //Serial.print("[HTTP] GET: PWS sent\n"); 
-        int httpCode;
-        if(!test_board) httpCode = http.GET();
-        if(test_board) httpCode = 200;
-        if(httpCode > 0) {
-              if(httpCode == HTTP_CODE_OK) {
-                      http.end();
-                      return true;
-          } else {
-              //Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-              if(!test_board) http.end();
-              return false;
-          }
-        }
+  HTTPClient http;
+  //Serial.print("[HTTP] begin...\n");
+  char wuPWS[768];
+  sprintf(wuPWS,"%s%s%s%s%s%i%s%f%s%f%s%f%s%i%s%f%s%f%s","https://weatherstation.wunderground.com/weatherstation/updateweatherstation.php?ID=",settings_WS.WUID,"&PASSWORD=",settings_WS.WUPW,"&dateutc=now&winddir=",int(WindDir),"&windspeedmph=",readWindSpeed(),"&tempf=",readTemp(),"&baromin=",readPressure(),"&humidity=",int(readHumidity()),"&dewptf=", readDewPoint(),"&windgustmph=", WindGust, "&action=updateraw");
+  if(!test_board) http.begin(wuPWS);
+  Serial.printf("%s\n",wuPWS); 
+  //Serial.print("[HTTP] GET: PWS sent\n"); 
+  int httpCode;
+  if(!test_board) httpCode = http.GET();
+  if(test_board) httpCode = 200;
+  if(httpCode > 0) {
+        if(httpCode == HTTP_CODE_OK) {
+                http.end();
+                return true;
+    } else {
+        //Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+        if(!test_board) http.end();
+        return false;
+    }
+  }
 }
 
 

@@ -610,7 +610,7 @@ void webSocketEvent(uint8_t num, WStype_t type_ws, uint8_t * payload, size_t len
           pch = strtok (NULL, ":");
           settings_WS.WUID = pch;
           pch = strtok (NULL, ":");
-          if( strcmp((char *)pch, "********") != 0 ) settings_WS.WUPW = pch;
+          if( strcmp((char *)pch, "********") != 0 && strcmp((char *)pch, "") != 0 ) settings_WS.WUPW = pch;
           pch = strtok (NULL, ":");
           settings_WS.BatDisp = atoi(pch);
           //Serial.printf("Settings Write, %i, %s, %s\n", settings_WS.WUUPD, settings_WS.WUID, settings_WS.WUPW);          

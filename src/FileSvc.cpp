@@ -207,42 +207,47 @@ String writeCipher(String hide){
   return cipher->encryptString(hide);
 }
 
+bool settingsUpdate = true;
 //read settings file, return settings struct
 settingsWS readSettings(void){
-  if(!fileExistsSettings()) { 
-    cipherKeyNew();
-    fileSetting = FileFS.open(settingsFile, "w"); 
-    fileCleanupSettings();
-  }
-  fileSetting = FileFS.open(settingsFile, "r+"); 
-  while (fileSetting.available()) {
-    String line = fileSetting.readStringUntil('\n');
-    if(line[0] == '#'){ continue; } //skip reading, comment line
-    int colonIndex = line.indexOf(':');
-    if (colonIndex >= 0) {
-      String token = line.substring(0,colonIndex);
-      String result = line.substring(colonIndex + 1);
-      if(token == "lat"){        settings_WS.lat = result.toFloat();} 
-      else if(token == "lon"){   settings_WS.lon = result.toFloat();} 
-      else if(token == "zip"){   settings_WS.zip = result.toInt();  }
-      else if(token == "DST"){   settings_WS.DST = result.toInt();  }
-      else if(token == "WindDir"){   settings_WS.WindDir = result.toInt();  }
-      else if(token == "TmpOffset"){   settings_WS.TempOffset = result.toFloat();  }
-      else if(token == "HumOffset"){   settings_WS.HumidityOffset = result.toFloat();  }
-      else if(token == "BarOffset"){   settings_WS.BaroOffset = result.toFloat();  }
-      else if(token == "WindOffset"){   settings_WS.WindOffset = result.toFloat();  }
-      else if(token == "WUUPD"){   settings_WS.WUUPD = result.toInt(); }
-      else if(token == "WUID"){   settings_WS.WUID = result; }
-      else if(token == "WUPW"){   settings_WS.WUPW = readCipher(result); }
-      else if(token == "BatDisp"){   settings_WS.BatDisp = result.toInt(); }
+  if(settingsUpdate){
+    if(!fileExistsSettings()) { 
+      cipherKeyNew();
+      fileSetting = FileFS.open(settingsFile, "w"); 
+      fileCleanupSettings();
     }
+    fileSetting = FileFS.open(settingsFile, "r+"); 
+    while (fileSetting.available()) {
+      String line = fileSetting.readStringUntil('\n');
+      if(line[0] == '#'){ continue; } //skip reading, comment line
+      int colonIndex = line.indexOf(':');
+      if (colonIndex >= 0) {
+        String token = line.substring(0,colonIndex);
+        String result = line.substring(colonIndex + 1);
+        if(token == "lat"){        settings_WS.lat = result.toFloat();} 
+        else if(token == "lon"){   settings_WS.lon = result.toFloat();} 
+        else if(token == "zip"){   settings_WS.zip = result.toInt();  }
+        else if(token == "DST"){   settings_WS.DST = result.toInt();  }
+        else if(token == "WindDir"){   settings_WS.WindDir = result.toInt();  }
+        else if(token == "TmpOffset"){   settings_WS.TempOffset = result.toFloat();  }
+        else if(token == "HumOffset"){   settings_WS.HumidityOffset = result.toFloat();  }
+        else if(token == "BarOffset"){   settings_WS.BaroOffset = result.toFloat();  }
+        else if(token == "WindOffset"){   settings_WS.WindOffset = result.toFloat();  }
+        else if(token == "WUUPD"){   settings_WS.WUUPD = result.toInt(); }
+        else if(token == "WUID"){   settings_WS.WUID = result; }
+        else if(token == "WUPW"){   settings_WS.WUPW = readCipher(result); }
+        else if(token == "BatDisp"){   settings_WS.BatDisp = result.toInt(); }
+      }
+    }
+    fileCleanupSettings();
+    settingsUpdate = false;
   }
-  fileCleanupSettings();
   return settings_WS;
 }
 
 //write setting to settings file
 void writeSettings(void){
+  settingsUpdate = true;
   if(!fileExistsSettings()) { 
     fileSetting = FileFS.open(settingsFile, "w"); 
     cipherKeyNew();
