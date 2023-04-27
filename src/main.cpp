@@ -30,8 +30,6 @@
  * 
  * TODO:
  * - add bootstrap to html
- * - add settings page, manual upd of location, and future settings
- * - add ability to integrate wunderground API
  * - add wireless ESP32 epaper weather display project (tbd)
  * - add page to display FS historic data
  * - add FS low space detection and auto FS history cleanup(fifo)
