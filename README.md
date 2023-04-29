@@ -67,8 +67,7 @@ All code is Arduino compatible. PlatformIO is my platform of choice. Lots of thi
  * ezTime @ 0.8.3 (required: ropg/ezTime @ ^0.8.3)
  * https://canvasjs.com/ (chart Javascript) for the local weather data charting
  * Chiper.cpp Created on: Feb 28, 2019 Author: joseph
-
-But if you use PlatformIO, I believe platform will help you get the libraries loaded. One library not listed that I had to manually add, the battery state monitor: BatteryRead, Copyright (c) 2019 Pangodream (MIT license).
+ * BatteryRead Copyright (c) 2019 Pangodream
 
 # Installing / first startup
 
