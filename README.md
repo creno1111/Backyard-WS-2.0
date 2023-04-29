@@ -23,9 +23,9 @@ Data charting:
  - 24 hour chars of Temperature, Humidity, Barometric pressure and Wind speed. 
  - 15 minute snapshots saved to internal FS, Space for a years worth of data.
  
- Weather Underground PWS:
-  - Uploading of data to wunderground.com weather map as PWS Data (type other)
-  - Update interval, ID and Key settable through settings page
+ Weather Underground PWS protocol upload:
+  - Upload weather data to 3 different sites that support WU PWS protocol 
+  - Update intervals, URLs, IDs and Keys configured through the settings page
 
 NWS (Nation weather service) of current location. Zip code lookup for location change.
 
