@@ -29,12 +29,10 @@
  * 
  * 
  * TODO:
- * - add bootstrap to html
  * - add wireless ESP32 epaper weather display project (tbd)
  * - add page to display FS historic data
  * - add FS low space detection and auto FS history cleanup(fifo)
  * - misc code cleanup, ugh - im a lazy coder :)
- * - add 3D files to the repository
  * 
  * Libraries
  * ├── ArduinoJson @ 6.21.1 (required: bblanchon/ArduinoJson @ ^6.21.1)
@@ -46,7 +44,9 @@
  * ├── ElegantOTA @ 2.2.9 (required: ayushsharma82/ElegantOTA @ ^2.2.7)
  * ├── NTPClient @ 3.2.1 (required: arduino-libraries/NTPClient @ ^3.1.0)
  * ├── WebSockets @ 2.3.7 (required: links2004/WebSockets @ ^2.3.6)
- * └── ezTime @ 0.8.3 (required: ropg/ezTime @ ^0.8.3)
+ * ├── ezTime @ 0.8.3 (required: ropg/ezTime @ ^0.8.3)
+ * ├── Chiper.cpp Created on: Feb 28, 2019 Author: joseph
+ * └── BatteryRead Copyright (c) 2019 Pangodream
  * 
  * MIT License
 */
@@ -67,11 +67,9 @@ RTC_DATA_ATTR bool resetCMD = false;        // DRD & serial cmd to reset credent
 bool updEnable=false;                       // OTA update indicator
 bool digitOverlay=true;
 
-/* PROJECT HEADERS */
 #include "timekeeper.h"
 #include "sensors.h"
 
-/* PROJECT GLOBALS */
 #define minuteDataPoints 60
 #define dayDataPoints    96
 float minuteGraphTemp[minuteDataPoints];
@@ -105,7 +103,6 @@ void setup() {
   Serial.println("\nSetup complete");
   Serial.println("______________________________________________\n\n"); 
   /**************** HW Startup **********************************************************/
-  /* PROJECT STARTUP */
   timeNTPStart();
   sensorsInit();
   graphDataInit();
