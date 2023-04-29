@@ -334,7 +334,11 @@
 
     //save settings
     function save() { 
-        doSend("SettingsWrite:" + DaylightST + ":" + WindDirOffset + ":" + WindOffset + ":" + TempOffset + ":" + HumOffset + ":" + BaroOffset + ":" + WUUPD1 + ":" + WUURL1 + ":" + WUID1 + ":" + WUKEY1 + ":" + WUUPD2 + ":" + WUURL2 + ":" + WUID2 + ":" + WUKEY2 + ":" + WUUPD3 + ":" + WUURL3 + ":" + WUID3 + ":" + WUKEY3 + ":" + BatteryDisplay); 
+        if(document.getElementById("quantity-error").innerHTML === ''){
+            doSend("SettingsWrite:" + DaylightST + ":" + WindDirOffset + ":" + WindOffset + ":" + TempOffset + ":" + HumOffset + ":" + BaroOffset + ":" + WUUPD1 + ":" + WUURL1 + ":" + WUID1 + ":" + WUKEY1 + ":" + WUUPD2 + ":" + WUURL2 + ":" + WUID2 + ":" + WUKEY2 + ":" + WUUPD3 + ":" + WUURL3 + ":" + WUID3 + ":" + WUKEY3 + ":" + BatteryDisplay); 
+            window.location.reload();
+        }
+        else alert("Please correct input value")
     }    
 
     //Websock data send
@@ -354,6 +358,18 @@
     document.getElementById("BD").checked = BatteryDisplay;
     }
 
+    var ValMin, ValMax;
+    function validateQuantity(ValDisp,ValInput,ValMin, ValMax) {
+        var input = document.getElementById(ValInput);
+        var error = document.getElementById("quantity-error");
+        
+        if (input.value < ValMin || input.value > ValMax) {
+            error.innerHTML = "<p>" + ValDisp + "</p><p>Please enter a value between " + ValMin + " and " + ValMax + "</p>";
+        } else {
+            error.innerHTML = "";
+        }
+    }
+
     //Initialize webpage load
 window.addEventListener("load", init, false);    
 </script>
@@ -370,30 +386,31 @@ window.addEventListener("load", init, false);
         </td></tr>
         <tr><td> <hr color="#501010" size="1">
             <p style="color:#a4a4a4">Sensors</p>
+            <span id="quantity-error" style="color: red"></span>
             <!-- Wind speed offset -->
-            Wind direction Offset (degrees)<input type="number" id="windDirectionOffset"  class="button" step="1">
+            Wind direction Offset (degrees)<input type="number" id="windDirectionOffset"  class="button" step="1" min="-180" max="180" oninput="validateQuantity('Wind Direction Offset','windDirectionOffset',-180,180)" >
         </td></tr>
         <tr><td> 
             <!-- Wind speed offset -->
-            Wind speed Offset (mph)<input type="number" id="windSpeedOffset"  class="button" step="0.1">
+            Wind speed Offset (mph)<input type="number" id="windSpeedOffset"  class="button" step="0.1"  min="-15" max="15" oninput="validateQuantity('Wind Speed Offset','windSpeedOffset',-15,15)" >
         </td></tr>                
         <tr><td> 
             <!-- Temp Offset -->
-            Temperature Offset (f)<input type="number" id="TemperatureOffset"  class="button" step="0.1"> 
+            Temperature Offset (f)<input type="number" id="TemperatureOffset"  class="button" step="0.1"  min="-15" max="15" oninput="validateQuantity('Tmp Offset','TemperatureOffset',-15,15)" >
         </td></tr>
         <tr><td> 
             <!-- Humidity Offset -->
-            Humidity Offset<input type="number" id="HumidityOffset"  class="button" step="0.1"> 
+            Humidity Offset<input type="number" id="HumidityOffset"  class="button" step="0.1"  min="-15" max="15" oninput="validateQuantity('Humidity Offset','HumidityOffset',-15,15)" >
         </td></tr>  
         <tr><td> 
             <!-- Barometric Offset -->
-            Barometric Pressure Offset<input type="number" id="BarometricOffset"  class="button" step="0.1"> 
+            Barometric Pressure Offset<input type="number" id="BarometricOffset"  class="button" step="0.01"  min="-3" max="3" oninput="validateQuantity('Baro Pressure Offset','BarometricOffset',-3,3)" >
         </td></tr>
         <tr><td> <hr color="#501010" size="1">
             <p style="color:#a4a4a4">WU PWS Protocol sites</p>            
             <p style="color:#f00; font-size: smaller;">SITE 1</p>
             <!-- WUUPD1 -->
-            Upd Interval (seconds, 0=Disabled)<input type="number" id="WUUPD1"  class="button" step="1">
+            Upd Interval (seconds, 0=Disabled)<input type="number" id="WUUPD1"  class="button" step="1" min="0">
         </td></tr>
         <tr><td>      
             <!-- WUURL1 -->
@@ -410,7 +427,7 @@ window.addEventListener("load", init, false);
         <tr><td>
             <p style="color:#f00; font-size: smaller;">SITE 2</p>
             <!-- WUUPD2 -->
-            Upd Interval (seconds, 0=Disabled)<input type="number" id="WUUPD2"  class="button" step="1">
+            Upd Interval (seconds, 0=Disabled)<input type="number" id="WUUPD2"  class="button" step="1" min="0">
         </td></tr>
         <tr><td>      
             <!-- WUURL2 -->
@@ -427,7 +444,7 @@ window.addEventListener("load", init, false);
         <tr><td>
             <p style="color:#f00; font-size: smaller;">SITE 3</p>
             <!-- WUUPD3 -->
-            Upd Interval (seconds, 0=Disabled)<input type="number" id="WUUPD3"  class="button" step="1">
+            Upd Interval (seconds, 0=Disabled)<input type="number" id="WUUPD3"  class="button" step="1" min="0">
         </td></tr>
         <tr><td>      
             <!-- WUURL3 -->
@@ -451,7 +468,7 @@ window.addEventListener("load", init, false);
         <!-- reload button -->
         <p><button type="button" onclick="reload()" id="reloadBtn" class="btn2">Reload current settings</button></p>
         <!-- save button -->
-        <p><button type="button" onclick="save();reload()" id="savetBtn" class="btn2">Save current settings</button></p>
+        <p><button type="button" onclick="save();" id="savetBtn" class="btn2">Save current settings</button></p>
         </div>
 </body>
 </head>

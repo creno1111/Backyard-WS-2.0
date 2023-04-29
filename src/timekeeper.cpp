@@ -113,16 +113,5 @@ int timeSecond(void){
     else return ts.tm_sec;
 }
 
-// //take a date and time as an imput and return the epoc time
-// time_t timeMake(int year, int month, int day, int hour, int minute, int second){
-//     struct tm t = { 0 };  // set all fields to 0
-//     t.tm_year = year - 1900;
-//     t.tm_mon = month;
-//     t.tm_mday = day;
-//     t.tm_hour = hour;
-//     t.tm_min = minute;
-//     t.tm_sec = second;
-//     t.tm_isdst = -1;  // Let system determine if DST was in effect
-//     return mktime(&t);
-// }
+
 

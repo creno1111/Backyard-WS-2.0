@@ -24,5 +24,6 @@ void webSocketSvc(void);
 void wsRemoteCtrl(void);
 
 void servicePWS(void);
+void SvcArchivalDate(void);
 
 #endif //WEBSVC_H

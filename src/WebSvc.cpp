@@ -2,7 +2,6 @@
 #include "WebSvc.h"
 #include "Network.h"
 #include "FileSvc.h"
-#include "input.h"
 #include <WebSocketsServer.h>
 #include <WiFi.h>
 #include <WiFiMulti.h>
@@ -747,4 +746,51 @@ void servicePWS(void){
     if(millis() > PWS2 + (settings_WS.WUUPD2 * 1000) && settings_WS.WUUPD2 != 0){PWS2 = millis(); WuPwsUploadProtocol(settings_WS.WUURL2, settings_WS.WUID2, settings_WS.WUPW2); } 
     static long PWS3 = millis();
     if(millis() > PWS3 + (settings_WS.WUUPD3 * 1000) && settings_WS.WUUPD3 != 0){PWS3 = millis(); WuPwsUploadProtocol(settings_WS.WUURL3, settings_WS.WUID3, settings_WS.WUPW3); }         
+}
+
+void SvcArchivalDate(void){
+  if(timeCheck()){                                                                //check that time is correct before allowing graph updates 
+
+    minuteGraphTemp[timeMinute()] = readTemp(); ;                                           //record minute data points
+    minuteGraphHumidity[timeMinute()] = readHumidity();
+    minuteGraphBarometric[timeMinute()] = readPressure();
+    minuteGraphWindspeed[timeMinute()] = readWindSpeed();
+    
+    static int set=0;
+    if(timeMinute()==0 && set!=1)  {                        //record day data points
+    saveHourlyData();     // FS: save last hours data
+    dayGraphTemp[timeHour()*4]         = readTemp(); 
+    dayGraphHumidity[timeHour()*4]     = readHumidity(); 
+      dayGraphBarometric[timeHour()*4]   = readPressure();
+      dayGraphWindspeed[timeHour()*4]    = readWindSpeed();
+      set=1;
+      }
+    if(timeMinute()==15 && set!=2) {
+      dayGraphTemp[(timeHour()*4) +1]       = readTemp(); 
+      dayGraphHumidity[timeHour()*4 +1]     = readHumidity(); 
+      dayGraphBarometric[timeHour()* 4 +1]  = readPressure();
+      dayGraphWindspeed[timeHour()*4 +1]    = readWindSpeed();
+
+      set=2;
+      }
+    if(timeMinute()==30 && set!=3) {
+      dayGraphTemp[(timeHour()*4) +2]       = readTemp(); 
+      dayGraphHumidity[timeHour()*4 +2]     = readHumidity(); 
+      dayGraphBarometric[timeHour()*4 +2]   = readPressure();
+      dayGraphWindspeed[timeHour()*4 +2]    = readWindSpeed();
+
+      set=3;
+      }
+    if(timeMinute()==45 && set!=4) {
+      dayGraphTemp[(timeHour()*4) +3]       = readTemp();
+      dayGraphHumidity[timeHour()*4 +3]     = readHumidity();  
+      dayGraphBarometric[timeHour()*4 +3]   = readPressure();
+      dayGraphWindspeed[timeHour()*4 +3]    = readWindSpeed();
+
+      set=4;
+      }
+    
+    //load saved data into 24h buffers
+    static bool once = true;  if(once){    once = false; fill24hBuffer(); }
+  }
 }

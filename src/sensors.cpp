@@ -112,6 +112,8 @@ void sensorsSvc(void){
       bme.read(pres, temp, hum, tempUnit, presUnit);
     }
   }
+  readWindDirection();
+  readWindSpeed();
 }
 
 String readWindDirection(void){
