@@ -97,12 +97,22 @@
         var HumOffset = 0.0;
         var BaroOffset = 0.0;
         var BatteryDisplay = 0;
-        var WUndergroundID = "";
-        var WUndergroundKey = "";
-        var WUndergroundInterval = 10;
+        var WUURL1 = "URL HERE";
+        var WUID1 = "ID HERE";
+        var WUKEY1 = "******";
+        var WUUPD1 = 0;
+        var WUURL2 = "URL HERE";
+        var WUID2 = "ID HERE";
+        var WUKEY2 = "******";
+        var WUUPD2 = 0;
+        var WUURL3 = "URL HERE";
+        var WUID3 = "ID HERE";
+        var WUKEY3 = "******";
+        var WUUPD3 = 0;                
         var url = "ws://" + window.location.host + ":1883/";
 
-        // This is called when the page finishes loading
+
+    // This is called when the page finishes loading
     function init() {
         //initialize on load
         document.getElementById("DST").checked = DaylightST;
@@ -111,35 +121,85 @@
         document.getElementById("TemperatureOffset").value = TempOffset;
         document.getElementById("HumidityOffset").value = HumOffset;
         document.getElementById("BarometricOffset").value = BaroOffset;
-        document.getElementById("WUndergroundInterval").value = WUndergroundInterval;
-        document.getElementById("WUndergroundID").value = WUndergroundID;
-        document.getElementById("WUndergroundInterval").value = WUndergroundInterval;
+        document.getElementById("WUUPD1").value = WUUPD1;
+        document.getElementById("WUURL1").value = WUURL1;
+        document.getElementById("WUID1").value = WUID1;
+        document.getElementById("WUKEY1").value = WUKEY1;
+        document.getElementById("WUUPD2").value = WUUPD2;
+        document.getElementById("WUURL2").value = WUURL2;
+        document.getElementById("WUID2").value = WUID2;
+        document.getElementById("WUKEY2").value = WUKEY2;
+        document.getElementById("WUUPD3").value = WUUPD3;
+        document.getElementById("WUURL3").value = WUURL3;
+        document.getElementById("WUID3").value = WUID3;
+        document.getElementById("WUKEY3").value = WUKEY3;                
         document.getElementById("BatteryDisplay").value = BatteryDisplay;
 
         document.getElementById("windDirectionOffset").addEventListener("input", function() {
             WindDirOffset = document.getElementById("windDirectionOffset").value
+            if(WindDirOffset ==="") WindDirOffset = "0"
         });
         document.getElementById("windSpeedOffset").addEventListener("input", function() {
             WindOffset = document.getElementById("windSpeedOffset").value
+            if(WindOffset ==="") WindOffset = "0"
         });        
         document.getElementById("TemperatureOffset").addEventListener("input", function() {
             TempOffset = document.getElementById("TemperatureOffset").value
+            if(TempOffset ==="") TempOffset = "0"
         });
         document.getElementById("HumidityOffset").addEventListener("input", function() {
             HumOffset = document.getElementById("HumidityOffset").value
+            if(HumOffset ==="") HumOffset = "0"
         });
         document.getElementById("BarometricOffset").addEventListener("input", function() {
             BaroOffset = document.getElementById("BarometricOffset").value
+            if(BaroOffset ==="") BaroOffset = "0"
         });
-        document.getElementById("WUndergroundInterval").addEventListener("input", function() {
-            WUndergroundInterval = document.getElementById("WUndergroundInterval").value
+        document.getElementById("WUUPD1").addEventListener("input", function() {
+            WUUPD1 = document.getElementById("WUUPD1").value
         });
-        document.getElementById("WUndergroundID").addEventListener("input", function() {
-            WUndergroundID = document.getElementById("WUndergroundID").value
+        document.getElementById("WUURL1").addEventListener("input", function() {
+            WUURL1 = document.getElementById("WUURL1").value
+            if(WUURL1 ==="") WUURL1 = "URL HERE"
         });
-        document.getElementById("WUndergroundKey").addEventListener("input", function() {
-            WUndergroundKey = document.getElementById("WUndergroundKey").value
+        document.getElementById("WUID1").addEventListener("input", function() {
+            WUID1 = document.getElementById("WUID1").value
+            if(WUID1 ==="") WUID1 = "ID HERE"
         });
+        document.getElementById("WUKEY1").addEventListener("input", function() {
+            WUKEY1 = document.getElementById("WUKEY1").value
+            if(WUKEY1 ==="") WUKEY1 = "******"
+        });
+        document.getElementById("WUUPD2").addEventListener("input", function() {
+            WUUPD2 = document.getElementById("WUUPD2").value
+        });
+        document.getElementById("WUURL2").addEventListener("input", function() {
+            WUURL2 = document.getElementById("WUURL2").value
+            if(WUURL2 ==="") WUURL2 = "URL HERE"
+        });
+        document.getElementById("WUID2").addEventListener("input", function() {
+            WUID2 = document.getElementById("WUID2").value
+            if(WUID2 ==="") WUID2 = "ID HERE"
+        });
+        document.getElementById("WUKEY2").addEventListener("input", function() {
+            WUKEY2 = document.getElementById("WUKEY2").value
+            if(WUKEY2 ==="") WUKEY2 = "******"
+        });
+        document.getElementById("WUUPD3").addEventListener("input", function() {
+            WUUPD3 = document.getElementById("WUUPD3").value
+        });
+        document.getElementById("WUURL3").addEventListener("input", function() {
+            WUURL3 = document.getElementById("WUURL3").value
+            if(WUURL3 ==="") WUURL3 = "URL HERE"
+        });
+        document.getElementById("WUID3").addEventListener("input", function() {
+            WUID3 = document.getElementById("WUID3").value
+            if(WUID3 ==="") WUID3 = "ID HERE"
+        });
+        document.getElementById("WUKEY3").addEventListener("input", function() {
+            WUKEY3 = document.getElementById("WUKEY3").value
+            if(WUKEY3 ==="") WUKEY3 = "******"
+        });                
         document.getElementById("BatteryDisplay").addEventListener("input", function() {
             BatteryDisplay = document.getElementById("BatteryDisplay").value
         });        
@@ -156,6 +216,7 @@
         websocket.onmessage = function(evt) { onMessage(evt) };
         websocket.onerror = function(evt) { onError(evt) };
     }
+
 
     //Websocket connection established
     function onOpen(evt) {
@@ -174,50 +235,92 @@
     //Websocket message received
     function onMessage(evt) {
         console.log(evt.data);
-        var param = evt.data.substring(0,3);
-        var dataPacket = evt.data.substring(3,evt.data.length);
+        var param = evt.data.substring(0,4);
+        var dataPacket = evt.data.substring(4,evt.data.length);
         //console.log(dataPacket);
         switch(param){
-            case "DT:":	
+            case "DT_:":	
                 DaylightST = parseInt(dataPacket);
                 if(DaylightST == 1)
                     document.getElementById("DST").checked = true;
                 else
                     document.getElementById("DST").checked = false;
                 break;
-            case "WD:":	
+            case "WD_:":	
             WindDirOffset = parseInt(dataPacket);
                 document.getElementById("windDirectionOffset").value = WindDirOffset;
                 break;
-            case "WO:":	
+            case "WO_:":	
             WindOffset = parseFloat(dataPacket);
                 document.getElementById("windSpeedOffset").value = WindOffset;
                 break;
-            case "TO:":	
+            case "TO_:":	
             TempOffset = parseFloat(dataPacket);
                 document.getElementById("TemperatureOffset").value = TempOffset;
                 break;
-            case "HO:":	
+            case "HO_:":	
             HumOffset = parseFloat(dataPacket);
                 document.getElementById("HumidityOffset").value = HumOffset;
                 break;   
-            case "BO:":	
+            case "BO_:":	
                     BaroOffset = parseFloat(dataPacket);
                     document.getElementById("BarometricOffset").value = BaroOffset;
                 break;   
-            case "WU:":
-                WUndergroundInterval = parseFloat(dataPacket);
-                document.getElementById("WUndergroundInterval").value = WUndergroundInterval;
+            case "WU1:":
+                WUUPD1 = parseFloat(dataPacket);
+                document.getElementById("WUUPD1").value = WUUPD1;
                 break;
-            case "WI:":	
-            WUndergroundID = dataPacket;
-                document.getElementById("WUndergroundID").value = WUndergroundID;
+            case "WI1:":	
+                WUID1 = dataPacket;
+                if(WUID1 ==="") WUID1 = "ID HERE"
+                document.getElementById("WUID1").value = WUID1;
+                break;  
+            case "WL1:":	 
+                WUURL1 = dataPacket;
+                if(WUURL1 ==="") WUURL1 = "URL HERE"
+                document.getElementById("WUURL1").value = WUURL1;
                 break;   
-            case "WK:":	
-            WUndergroundKey = dataPacket;
-                    document.getElementById("WUndergroundKey").value = WUndergroundKey;
+            case "WK1:":	
+                WUKEY1 = dataPacket;
+                    document.getElementById("WUKEY1").value = WUKEY1;
                 break; 
-            case "BD:":   
+            case "WU2:":
+                WUUPD2 = parseFloat(dataPacket);
+                document.getElementById("WUUPD2").value = WUUPD2;
+                break;
+            case "WI2:":	
+                WUID2 = dataPacket;
+                if(WUID2 ==="") WUID2 = "ID HERE"
+                document.getElementById("WUID2").value = WUID2;
+                break;  
+            case "WL2:":	 
+                WUURL2 = dataPacket;
+                if(WUURL2 ==="") WUURL2 = "URL HERE"
+                document.getElementById("WUURL2").value = WUURL2;
+                break;   
+            case "WK2:":	
+                WUKEY2 = dataPacket;
+                    document.getElementById("WUKEY2").value = WUKEY2;
+                break; 
+            case "WU3:":
+                WUUPD3 = parseFloat(dataPacket);
+                document.getElementById("WUUPD3").value = WUUPD3;
+                break;
+            case "WI3:":	
+                WUID3 = dataPacket;
+                if(WUID3 ==="") WUID3 = "ID HERE"
+                document.getElementById("WUID3").value = WUID3;
+                break;  
+            case "WL3:":	 
+                WUURL3 = dataPacket;
+                if(WUURL3 ==="") WUURL3 = "URL HERE"
+                document.getElementById("WUURL3").value = WUURL3;
+                break;   
+            case "WK3:":	
+                WUKEY3 = dataPacket;
+                    document.getElementById("WUKEY3").value = WUKEY3;
+                break;                                 
+            case "BD_:":   
                 BatteryDisplay = dataPacket;
                     document.getElementById("BatteryDisplay").value = BatteryDisplay;
                 break;                               
@@ -231,7 +334,7 @@
 
     //save settings
     function save() { 
-        doSend("SettingsWrite:" + DaylightST + ":" + WindDirOffset + ":" + WindOffset + ":" + TempOffset + ":" + HumOffset + ":" + BaroOffset + ":" + WUndergroundInterval + ":" + WUndergroundID + ":" + WUndergroundKey + ":" + BatteryDisplay); 
+        doSend("SettingsWrite:" + DaylightST + ":" + WindDirOffset + ":" + WindOffset + ":" + TempOffset + ":" + HumOffset + ":" + BaroOffset + ":" + WUUPD1 + ":" + WUURL1 + ":" + WUID1 + ":" + WUKEY1 + ":" + WUUPD2 + ":" + WUURL2 + ":" + WUID2 + ":" + WUKEY2 + ":" + WUUPD3 + ":" + WUURL3 + ":" + WUID3 + ":" + WUKEY3 + ":" + BatteryDisplay); 
     }    
 
     //Websock data send
@@ -244,6 +347,11 @@
     function DSTupd() { 
     if(DaylightST === 1){ DaylightST = 0; } else { DaylightST = 1; }
     document.getElementById("DST").checked = DaylightST;
+    }
+    //Read BD checkbox
+    function BDupd() { 
+    if(BatteryDisplay === 1){ BatteryDisplay = 0; } else { BatteryDisplay = 1; }
+    document.getElementById("BD").checked = BatteryDisplay;
     }
 
     //Initialize webpage load
@@ -282,24 +390,61 @@ window.addEventListener("load", init, false);
             Barometric Pressure Offset<input type="number" id="BarometricOffset"  class="button" step="0.1"> 
         </td></tr>
         <tr><td> <hr color="#501010" size="1">
-            <p style="color:#a4a4a4">Weather Underground PWS</p>            
-            <!-- WUUPD -->
-            Upd Interval (seconds)<input type="number" id="WUndergroundInterval"  class="button" step="1">
+            <p style="color:#a4a4a4">WU PWS Protocol sites</p>            
+            <p style="color:#f00; font-size: smaller;">SITE 1</p>
+            <!-- WUUPD1 -->
+            Upd Interval (seconds, 0=Disabled)<input type="number" id="WUUPD1"  class="button" step="1">
         </td></tr>
         <tr><td>      
-            <!-- WUID -->
-            ID<input type="text" id="WUndergroundID"  class="button">
+            <!-- WUURL1 -->
+            URL = https://{...URL...}?<input type="text" id="WUURL1"  class="button">
         </td></tr>
+        <tr><td>      
+            <!-- WUID1 -->
+            ID<input type="text" id="WUID1"  class="button">
+        </td></tr>        
         <tr><td>
-            <!-- WUKey -->
-            Key<input type="text" id="WUndergroundKey"  class="button">
-            <p style="color:#f00; font-size: smaller;">Key is encrypted.</p>
-        </td></tr>       
+            <!-- WUKey1 -->
+            Key (encrypted on save)<input type="text" id="WUKEY1"  class="button">
+        </td></tr> 
+        <tr><td>
+            <p style="color:#f00; font-size: smaller;">SITE 2</p>
+            <!-- WUUPD2 -->
+            Upd Interval (seconds, 0=Disabled)<input type="number" id="WUUPD2"  class="button" step="1">
         </td></tr>
+        <tr><td>      
+            <!-- WUURL2 -->
+            URL = https://{...URL...}?<input type="text" id="WUURL2"  class="button">
+        </td></tr>
+        <tr><td>      
+            <!-- WUID2 -->
+            ID<input type="text" id="WUID2"  class="button">
+        </td></tr>        
+        <tr><td>
+            <!-- WUKey2 -->
+            Key (encrypted on save)<input type="text" id="WUKEY2"  class="button">
+        </td></tr> 
+        <tr><td>
+            <p style="color:#f00; font-size: smaller;">SITE 3</p>
+            <!-- WUUPD3 -->
+            Upd Interval (seconds, 0=Disabled)<input type="number" id="WUUPD3"  class="button" step="1">
+        </td></tr>
+        <tr><td>      
+            <!-- WUURL3 -->
+            URL = https://{...URL...}?<input type="text" id="WUURL3"  class="button">
+        </td></tr>
+        <tr><td>      
+            <!-- WUID3 -->
+            ID<input type="text" id="WUID3"  class="button">
+        </td></tr>        
+        <tr><td>
+            <!-- WUKey3 -->
+            Key (encrypted on save)<input type="text" id="WUKEY3"  class="button">
+        </td></tr>                  
         <tr><td> <hr color="#501010" size="1">
             <p style="color:#a4a4a4">Misc</p>            
-            <!-- WUUPD -->
-            Battery Display (0 or 1)<input type="number" id="BatteryDisplay"  class="button" step="1">
+            <!-- WUUPD3 -->          
+            <button type="button" id="BatteryDisplay"   onclick="BDupd()" class="button">Battery Display <input type="checkbox" id="BD" onclick="BDupd()" ></button>
         </td></tr>
         </table>
         <hr color="#501010" size="1">

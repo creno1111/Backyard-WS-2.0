@@ -14,7 +14,6 @@
 #include <WiFiClient.h>
 // From v1.1.0
 #include <WiFiMulti.h>
-#include "HttpClient.h"
 WiFiMulti wifiMulti;
 
 
@@ -534,30 +533,6 @@ bool getLatLon(long zip, double &lat, double &lon){
   http.end();
   return true;
 }
-
-bool wUndergroundPWS(void){
-  HTTPClient http;
-  //Serial.print("[HTTP] begin...\n");
-  char wuPWS[768];
-  sprintf(wuPWS,"%s%s%s%s%s%i%s%f%s%f%s%f%s%i%s%f%s%f%s","https://weatherstation.wunderground.com/weatherstation/updateweatherstation.php?ID=",settings_WS.WUID,"&PASSWORD=",settings_WS.WUPW,"&dateutc=now&winddir=",int(WindDir),"&windspeedmph=",readWindSpeed(),"&tempf=",readTemp(),"&baromin=",readPressure(),"&humidity=",int(readHumidity()),"&dewptf=", readDewPoint(),"&windgustmph=", WindGust, "&action=updateraw");
-  if(!test_board) http.begin(wuPWS);
-  Serial.printf("%s\n",wuPWS); 
-  //Serial.print("[HTTP] GET: PWS sent\n"); 
-  int httpCode;
-  if(!test_board) httpCode = http.GET();
-  if(test_board) httpCode = 200;
-  if(httpCode > 0) {
-        if(httpCode == HTTP_CODE_OK) {
-                http.end();
-                return true;
-    } else {
-        //Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
-        if(!test_board) http.end();
-        return false;
-    }
-  }
-}
-
 
 
 

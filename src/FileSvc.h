@@ -2,18 +2,32 @@
 #define FILESVC_H
 
 struct settingsWS {
+  //Location data
   double lat;
   double lon;
   int zip;
   int DST;
+  //Sensor data
   int8_t WindDir;
   double WindOffset;
   double TempOffset;
   double BaroOffset;
   double HumidityOffset;
-  int WUUPD;
-  String WUID;
-  String WUPW;
+  //PWS data
+  int WUUPD1;
+  String WUURL1;
+  String WUID1;
+  String WUPW1;
+  int WUUPD2;
+  String WUURL2;
+  String WUID2;
+  String WUPW2;
+  int WUUPD3;
+  String WUURL3;
+  String WUID3;
+  String WUPW3;
+
+  //misc data
   int BatDisp;
 };
 

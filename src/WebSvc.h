@@ -23,4 +23,6 @@ void handleClockArgs(void);
 void webSocketSvc(void);
 void wsRemoteCtrl(void);
 
+void servicePWS(void);
+
 #endif //WEBSVC_H

@@ -178,11 +178,12 @@ String readWindDirection(void){
 float readWindSpeed(void){
   static float calcSpeed = 0;
   static long startTime=millis();
-
+  int WindGustHold1 = 3600; //seconds to hold first Gust
+  int windGustHold2 = 2700; //seconds before second level Gust starts recording
   // service mph calculations every 1 second
   if(millis() > calcResult + 1000){
     float offsetTime = (millis() - calcResult)/1000; //calculate time from last reading
-    if(accAngle < offsetTime*900) accAngle = 0; //remove analog noise on no wind conditions
+    if(accAngle < offsetTime*600) accAngle = 0; //remove analog noise on no wind conditions
 
     // //windspeed angle buffer (5x oversampling) 
     static int aAbuffCnt = 0;
@@ -224,11 +225,11 @@ float readWindSpeed(void){
       maxWindGust = windSpeed;
       SecondHighestWindGust = 0;
     }
-    if(millis() > maxHold + (2700 * 1000)){
-      if (windSpeed > SecondHighestWindGust)     SecondHighestWindGust = windSpeed;
+    if(millis() > maxHold + (windGustHold2 * 1000)){
+      if (windSpeed > SecondHighestWindGust) SecondHighestWindGust = windSpeed;
     }
-    if(millis() > maxHold + (3600 * 1000)){
-      maxWindGust = SecondHighestWindGust;    maxHold = millis();
+    if(millis() > maxHold + (WindGustHold1 * 1000)){
+      maxWindGust = SecondHighestWindGust; maxHold = millis();
       SecondHighestWindGust = 0;
     }
     WindGust = maxWindGust;

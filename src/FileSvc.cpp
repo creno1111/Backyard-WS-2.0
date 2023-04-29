@@ -233,9 +233,18 @@ settingsWS readSettings(void){
         else if(token == "HumOffset"){   settings_WS.HumidityOffset = result.toFloat();  }
         else if(token == "BarOffset"){   settings_WS.BaroOffset = result.toFloat();  }
         else if(token == "WindOffset"){   settings_WS.WindOffset = result.toFloat();  }
-        else if(token == "WUUPD"){   settings_WS.WUUPD = result.toInt(); }
-        else if(token == "WUID"){   settings_WS.WUID = result; }
-        else if(token == "WUPW"){   settings_WS.WUPW = readCipher(result); }
+        else if(token == "WUUPD1"){   settings_WS.WUUPD1 = result.toInt(); }
+        else if(token == "WUURL1"){   settings_WS.WUURL1 = result; }
+        else if(token == "WUID1"){   settings_WS.WUID1 = result; }
+        else if(token == "WUPW1"){   settings_WS.WUPW1 = readCipher(result); }
+        else if(token == "WUUPD2"){   settings_WS.WUUPD2 = result.toInt(); }
+        else if(token == "WUURL2"){   settings_WS.WUURL2 = result; }
+        else if(token == "WUID2"){   settings_WS.WUID2 = result; }
+        else if(token == "WUPW2"){   settings_WS.WUPW2 = readCipher(result); }
+        else if(token == "WUUPD3"){   settings_WS.WUUPD3 = result.toInt(); }
+        else if(token == "WUURL3"){   settings_WS.WUURL3 = result; }
+        else if(token == "WUID3"){   settings_WS.WUID3 = result; }
+        else if(token == "WUPW3"){   settings_WS.WUPW3 = readCipher(result); }                
         else if(token == "BatDisp"){   settings_WS.BatDisp = result.toInt(); }
       }
     }
@@ -266,9 +275,18 @@ void writeSettings(void){
     fileSetting.printf("HumOffset:%f\n", settings_WS.HumidityOffset);
     fileSetting.printf("BarOffset:%f\n", settings_WS.BaroOffset); 
     fileSetting.printf("WindOffset:%f\n", settings_WS.WindOffset); 
-    fileSetting.printf("WUUPD:%i\n", settings_WS.WUUPD); 
-    fileSetting.printf("WUID:%s\n", settings_WS.WUID); 
-    fileSetting.printf("WUPW:%s\n", writeCipher(settings_WS.WUPW).c_str());
+    fileSetting.printf("WUUPD1:%i\n", settings_WS.WUUPD1); 
+    fileSetting.printf("WUURL1:%s\n", settings_WS.WUURL1.c_str()); 
+    fileSetting.printf("WUID1:%s\n", settings_WS.WUID1.c_str()); 
+    fileSetting.printf("WUPW1:%s\n", writeCipher(settings_WS.WUPW1).c_str());
+    fileSetting.printf("WUUPD2:%i\n", settings_WS.WUUPD2); 
+    fileSetting.printf("WUURL2:%s\n", settings_WS.WUURL2.c_str()); 
+    fileSetting.printf("WUID2:%s\n", settings_WS.WUID2.c_str()); 
+    fileSetting.printf("WUPW2:%s\n", writeCipher(settings_WS.WUPW2).c_str());
+    fileSetting.printf("WUUPD3:%i\n", settings_WS.WUUPD3); 
+    fileSetting.printf("WUURL3:%s\n", settings_WS.WUURL3.c_str()); 
+    fileSetting.printf("WUID3:%s\n", settings_WS.WUID3.c_str()); 
+    fileSetting.printf("WUPW3:%s\n", writeCipher(settings_WS.WUPW3).c_str());
     fileSetting.printf("BatDisp:%i\n", settings_WS.BatDisp);
     fileSetting.printf("\n# To obtain a new cipher key, delete the settings file.\n");
     fileSetting.printf("# On save of settings page the cipher key will be randomly regenerated and saved to the EEPROM.\n");

@@ -11,8 +11,9 @@
 #include "timekeeper.h"
 #include "sensors.h"
 #include "arduinojson.h"
+#include "HttpClient.h"
 
-
+extern bool test_board;
 extern float minuteGraphTemp[60];
 extern int minuteGraphHumidity[60];
 extern float minuteGraphBarometric[60];
@@ -567,25 +568,43 @@ void webSocketEvent(uint8_t num, WStype_t type_ws, uint8_t * payload, size_t len
           writeSettings();
         //receive request for settings
         } else if(  ( strcmp((char *)payload, "SettingsRead") == 0 ) ){
-          sprintf(msg_buf,"DT:%i", settings_WS.DST);
+          sprintf(msg_buf,"DT_:%i", settings_WS.DST);
           webSocket.sendTXT(num,msg_buf);
-          sprintf(msg_buf,"WD:%i", settings_WS.WindDir);
+          sprintf(msg_buf,"WD_:%i", settings_WS.WindDir);
           webSocket.sendTXT(num,msg_buf);
-          sprintf(msg_buf,"WO:%f", settings_WS.WindOffset);
+          sprintf(msg_buf,"WO_:%f", settings_WS.WindOffset);
           webSocket.sendTXT(num,msg_buf);
-          sprintf(msg_buf,"TO:%f", settings_WS.TempOffset);
+          sprintf(msg_buf,"TO_:%f", settings_WS.TempOffset);
           webSocket.sendTXT(num,msg_buf);          
-          sprintf(msg_buf,"BO:%f", settings_WS.BaroOffset);
+          sprintf(msg_buf,"BO_:%f", settings_WS.BaroOffset);
           webSocket.sendTXT(num,msg_buf);
-          sprintf(msg_buf,"HO:%f", settings_WS.HumidityOffset);
+          sprintf(msg_buf,"HO_:%f", settings_WS.HumidityOffset);
           webSocket.sendTXT(num,msg_buf);
-          sprintf(msg_buf,"WU:%i", settings_WS.WUUPD);
+          sprintf(msg_buf,"WU1:%i", settings_WS.WUUPD1);
           webSocket.sendTXT(num,msg_buf);          
-          sprintf(msg_buf,"WI:%s", settings_WS.WUID);
+          sprintf(msg_buf,"WL1:%s", settings_WS.WUURL1.c_str());
           webSocket.sendTXT(num,msg_buf);
-          sprintf(msg_buf,"WK:%s", "********");
+          sprintf(msg_buf,"WI1:%s", settings_WS.WUID1.c_str());
+          webSocket.sendTXT(num,msg_buf);
+          sprintf(msg_buf,"WK1:%s", "********");
           webSocket.sendTXT(num,msg_buf);          
-          sprintf(msg_buf,"BD:%i", settings_WS.BatDisp);
+          sprintf(msg_buf,"WU2:%i", settings_WS.WUUPD2);
+          webSocket.sendTXT(num,msg_buf);          
+          sprintf(msg_buf,"WL2:%s", settings_WS.WUURL2.c_str());
+          webSocket.sendTXT(num,msg_buf);
+          sprintf(msg_buf,"WI2:%s", settings_WS.WUID2.c_str());
+          webSocket.sendTXT(num,msg_buf);
+          sprintf(msg_buf,"WK2:%s", "********");
+          webSocket.sendTXT(num,msg_buf);          
+          sprintf(msg_buf,"WU3:%i", settings_WS.WUUPD3);
+          webSocket.sendTXT(num,msg_buf);          
+          sprintf(msg_buf,"WL3:%s", settings_WS.WUURL3.c_str());
+          webSocket.sendTXT(num,msg_buf);
+          sprintf(msg_buf,"WI3:%s", settings_WS.WUID3.c_str());
+          webSocket.sendTXT(num,msg_buf);
+          sprintf(msg_buf,"WK3:%s", "********");
+          webSocket.sendTXT(num,msg_buf);                              
+          sprintf(msg_buf,"BD_:%i", settings_WS.BatDisp);
           webSocket.sendTXT(num,msg_buf);          
 
         //receive request for settings write
@@ -606,14 +625,33 @@ void webSocketEvent(uint8_t num, WStype_t type_ws, uint8_t * payload, size_t len
           pch = strtok (NULL, ":");
           settings_WS.BaroOffset = atof(pch);
           pch = strtok (NULL, ":");
-          settings_WS.WUUPD = atoi(pch);
+          settings_WS.WUUPD1 = atoi(pch);
           pch = strtok (NULL, ":");
-          settings_WS.WUID = pch;
+          settings_WS.WUURL1 = pch;
           pch = strtok (NULL, ":");
-          if( strcmp((char *)pch, "********") != 0 && strcmp((char *)pch, "") != 0 ) settings_WS.WUPW = pch;
+          settings_WS.WUID1 = pch;
           pch = strtok (NULL, ":");
+          if( strcmp((char *)pch, "********") != 0 && strcmp((char *)pch, "") != 0 ) settings_WS.WUPW1 = pch;
+          pch = strtok (NULL, ":");
+          settings_WS.WUUPD2 = atoi(pch);
+          pch = strtok (NULL, ":");
+          settings_WS.WUURL2 = pch;
+          pch = strtok (NULL, ":");
+          settings_WS.WUID2 = pch;
+          pch = strtok (NULL, ":");
+          if( strcmp((char *)pch, "********") != 0 && strcmp((char *)pch, "") != 0 ) settings_WS.WUPW2 = pch;
+          pch = strtok (NULL, ":");
+          settings_WS.WUUPD3 = atoi(pch);
+          pch = strtok (NULL, ":");
+          settings_WS.WUURL3 = pch;
+          Serial.printf("len: %i\n",strlen(pch));
+          Serial.println(pch);
+          pch = strtok (NULL, ":");
+          settings_WS.WUID3 = pch;
+          pch = strtok (NULL, ":");
+          if( strcmp((char *)pch, "********") != 0 && strcmp((char *)pch, "") != 0 ) settings_WS.WUPW3 = pch;
+          pch = strtok (NULL, ":");                    
           settings_WS.BatDisp = atoi(pch);
-          //Serial.printf("Settings Write, %i, %s, %s\n", settings_WS.WUUPD, settings_WS.WUID, settings_WS.WUPW);          
           writeSettings();
         // reset system
         } else if(  ( strcmp((char *)payload, "resetWS") == 0 ) ){
@@ -671,4 +709,42 @@ void fileSort(JsonArray& fileList) {
     }
     n--;
   }
+}
+
+// Personal Weather Service updates to WU Protocol compatible sites
+// If interval update is 0, that PWS update will be disabled
+bool WuPwsUploadProtocol(String URL, String ID, String KEY){
+  HTTPClient http;
+  char wuPWS[768];
+  sprintf(wuPWS,"%s%s%s%s%s%s%s%i%s%f%s%f%s%f%s%i%s%f%s%f%s",
+          "https://",URL.c_str(),"?ID=",ID.c_str(),"&PASSWORD=",KEY.c_str(),
+          "&dateutc=now&winddir=",int(WindDir),"&windspeedmph=",readWindSpeed(),
+          "&tempf=",readTemp(),"&baromin=",readPressure(),"&humidity=",
+          int(readHumidity()),"&dewptf=", readDewPoint(),"&windgustmph=",
+          WindGust, "&action=updateraw");
+  if(!test_board) http.begin(wuPWS);
+  Serial.printf("%s\n",wuPWS); 
+  int httpCode;
+  if(!test_board) httpCode = http.GET();
+  if(test_board) httpCode = 200;
+  if(httpCode > 0) {
+        if(httpCode == HTTP_CODE_OK) {
+                http.end();
+                return true;
+    } else {
+        if(!test_board) http.end();
+        return false;
+    }
+  }
+  if(!test_board) http.end();
+  return false;
+}
+//Service PWS uploads
+void servicePWS(void){
+    static long PWS1 = millis();
+    if(millis() > PWS1 + (settings_WS.WUUPD1 * 1000) && settings_WS.WUUPD1 != 0){PWS1 = millis(); WuPwsUploadProtocol(settings_WS.WUURL1, settings_WS.WUID1, settings_WS.WUPW1); } 
+    static long PWS2 = millis();
+    if(millis() > PWS2 + (settings_WS.WUUPD2 * 1000) && settings_WS.WUUPD2 != 0){PWS2 = millis(); WuPwsUploadProtocol(settings_WS.WUURL2, settings_WS.WUID2, settings_WS.WUPW2); } 
+    static long PWS3 = millis();
+    if(millis() > PWS3 + (settings_WS.WUUPD3 * 1000) && settings_WS.WUUPD3 != 0){PWS3 = millis(); WuPwsUploadProtocol(settings_WS.WUURL3, settings_WS.WUID3, settings_WS.WUPW3); }         
 }

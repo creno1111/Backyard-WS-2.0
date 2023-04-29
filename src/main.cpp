@@ -123,13 +123,8 @@ void loop() {
       checkWiFiDly = millis();
       check_WiFi();
     } 
-  sensorsSvc();
-
-    static long PWS = millis();
-    if(millis() > PWS + (settings_WS.WUUPD * 1000)){
-      PWS = millis();
-      wUndergroundPWS();
-    } 
+  sensorsSvc();       //service sensors
+  servicePWS();       //service external PWS updates
 
   //read to service the sensor buffers
   readWindDirection();
