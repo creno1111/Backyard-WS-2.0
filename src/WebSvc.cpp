@@ -604,7 +604,9 @@ void webSocketEvent(uint8_t num, WStype_t type_ws, uint8_t * payload, size_t len
           sprintf(msg_buf,"WK3:%s", "********");
           webSocket.sendTXT(num,msg_buf);                              
           sprintf(msg_buf,"BD_:%i", settings_WS.BatDisp);
-          webSocket.sendTXT(num,msg_buf);          
+          webSocket.sendTXT(num,msg_buf);  
+          sprintf(msg_buf,"TZO:%i", settings_WS.tzOffset);
+          webSocket.sendTXT(num,msg_buf);                    
 
         //receive request for settings write
         } else if( strncmp((char *)payload, "SettingsWrite", 13) == 0 ){
@@ -651,6 +653,8 @@ void webSocketEvent(uint8_t num, WStype_t type_ws, uint8_t * payload, size_t len
           if( strcmp((char *)pch, "********") != 0 && strcmp((char *)pch, "") != 0 ) settings_WS.WUPW3 = pch;
           pch = strtok (NULL, ":");                    
           settings_WS.BatDisp = atoi(pch);
+          pch = strtok (NULL, ":");                    
+          settings_WS.tzOffset = atoi(pch);
           writeSettings();
         // reset system
         } else if(  ( strcmp((char *)payload, "resetWS") == 0 ) ){

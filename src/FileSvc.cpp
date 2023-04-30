@@ -228,6 +228,7 @@ settingsWS readSettings(void){
         else if(token == "lon"){   settings_WS.lon = result.toFloat();} 
         else if(token == "zip"){   settings_WS.zip = result.toInt();  }
         else if(token == "DST"){   settings_WS.DST = result.toInt();  }
+        else if(token == "TZO"){   settings_WS.tzOffset = result.toInt();  }
         else if(token == "WindDir"){   settings_WS.WindDir = result.toInt();  }
         else if(token == "TmpOffset"){   settings_WS.TempOffset = result.toFloat();  }
         else if(token == "HumOffset"){   settings_WS.HumidityOffset = result.toFloat();  }
@@ -270,6 +271,7 @@ void writeSettings(void){
     fileSetting.printf("zip:%i\n", settings_WS.zip); // Write the zip code value
     fileSetting.printf("\n# Other settings are set from the settings page\n");
     fileSetting.printf("DST:%i\n", settings_WS.DST);
+    fileSetting.printf("TZO:%i\n", settings_WS.tzOffset);
     fileSetting.printf("WindDir:%i\n", settings_WS.WindDir);
     fileSetting.printf("TmpOffset:%f\n", settings_WS.TempOffset); 
     fileSetting.printf("HumOffset:%f\n", settings_WS.HumidityOffset);

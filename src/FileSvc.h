@@ -7,6 +7,7 @@ struct settingsWS {
   double lon;
   int zip;
   int DST;
+  int tzOffset;
   //Sensor data
   int8_t WindDir;
   double WindOffset;
