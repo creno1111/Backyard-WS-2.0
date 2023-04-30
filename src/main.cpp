@@ -94,18 +94,14 @@ void setup() {
   webSetup();                   // setup web services
   Serial.println("\nSetup complete");
   Serial.println("______________________________________________\n\n"); 
+  sensorsInit();                //init sensors  
   timeNTPStart();               //init NTP services
-  sensorsInit();                //init sensors
   graphDataInit();              //init graph buffers
 }
 
 void loop() {
   //Check WiFi and reconnect if disconnected
-  static long checkWiFiDly = millis();
-  if(millis() > checkWiFiDly + 60000){
-    checkWiFiDly = millis();
-    check_WiFi();
-  }
+  WiFiHealthCheck();
   
   //process web functions
   webServerHandle();  // handle webserver function

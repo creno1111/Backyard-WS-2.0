@@ -19,7 +19,7 @@ extern struct settingsWS settings_WS;
 //initialize NTP services and set time offset
 void timeNTPStart(void){
     timeClient.begin();
-    timeClient.setTimeOffset(-18000); //offset for EST time
+    timeClient.setTimeOffset(settings_WS.tzOffset * 3600); //offset for EST time
 }
 
 
@@ -38,7 +38,7 @@ bool timeCheck(void){
             time++;
         }  
         if(time==3){ Serial.printf("No NTP sync after %i tries.\n", time); timeSet=false;  }  //failed time check
-        timeSet=true;
+        else timeSet=true;
     }
     int epocDST = 0;
     if(settings_WS.DST == 0) epocDST = 3600;  //DST offset

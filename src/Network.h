@@ -7,6 +7,7 @@
 
 
 void heartBeatPrint(void);
+void WiFiHealthCheck(void);
 void check_WiFi(void);
 void check_status(void);
 void loadConfigData(void);

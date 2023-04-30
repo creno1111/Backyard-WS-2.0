@@ -157,6 +157,15 @@ void heartBeatPrint(void)
 
 }
 
+void WiFiHealthCheck(void)
+{
+  static long checkWiFiDly = millis();
+  if(millis() > checkWiFiDly + 60000){
+    checkWiFiDly = millis();
+    check_WiFi();
+  }
+}
+
 void check_WiFi(void)
 {
   if ( (WiFi.status() != WL_CONNECTED) )
