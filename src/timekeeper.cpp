@@ -19,7 +19,7 @@ extern struct settingsWS settings_WS;
 //initialize NTP services and set time offset
 void timeNTPStart(void){
     timeClient.begin();
-    timeClient.setTimeOffset(settings_WS.tzOffset * 3600); //offset for EST time
+    timeClient.setTimeOffset(settings_WS.tzOffset * 3600); //Set TZ offset
 }
 
 

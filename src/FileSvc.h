@@ -27,7 +27,6 @@ struct settingsWS {
   String WUURL3;
   String WUID3;
   String WUPW3;
-
   //misc data
   int BatDisp;
 };
@@ -38,7 +37,6 @@ void fill24hBuffer(void);
 bool fileExistsSettings(void);
 void openSettings(double &lat, double &lon);
 settingsWS readSettings(void);
-void saveSettings(float lat, float lon);
 void writeSettings(void);
 
 #endif //FILESVC_H

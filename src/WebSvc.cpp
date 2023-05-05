@@ -752,7 +752,7 @@ void servicePWS(void){
     if(millis() > PWS3 + (settings_WS.WUUPD3 * 1000) && settings_WS.WUUPD3 != 0){PWS3 = millis(); WuPwsUploadProtocol(settings_WS.WUURL3, settings_WS.WUID3, settings_WS.WUPW3); }         
 }
 
-void SvcArchivalDate(void){
+void SvcArchivalData(void){
   if(timeCheck()){                                                                //check that time is correct before allowing graph updates 
 
     minuteGraphTemp[timeMinute()] = readTemp(); ;                                           //record minute data points

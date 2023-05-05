@@ -110,7 +110,7 @@ void loop() {
   //process weather functions
   sensorsSvc();       //service sensors
   servicePWS();       //service external PWS updates
-  SvcArchivalDate();  //service archival date buffers
+  SvcArchivalData();  //service archival data buffers
 }
 
 
